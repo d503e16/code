@@ -1,0 +1,11 @@
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\bin\Debug\designhelper.exe.config
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\bin\Debug\designhelper.exe
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\bin\Debug\designhelper.pdb
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\obj\Debug\designhelper.csprojResolveAssemblyReference.cache
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\obj\Debug\designhelper.Form1.resources
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\obj\Debug\designhelper.Properties.Resources.resources
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\obj\Debug\designhelper.csproj.GenerateResource.Cache
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\obj\Debug\designhelper.exe
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\obj\Debug\designhelper.pdb
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\bin\Debug\Newtonsoft.Json.dll
+c:\users\rasmuskrusaa\documents\visual studio 2015\Projects\designhelper\designhelper\bin\Debug\Newtonsoft.Json.xml
