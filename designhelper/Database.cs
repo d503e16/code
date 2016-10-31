@@ -38,7 +38,7 @@ namespace designhelper
 		// A method for creating tables in the databasefile
 		private void CreateTables()
 		{
-			Execute("CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTERGER)");
+			Execute("CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)");
 			Execute("CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))");
 		}
 

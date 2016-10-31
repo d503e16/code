@@ -1,0 +1,13 @@
+D:\Development\code\designhelper\bin\x86\Debug\designhelper.exe.config
+D:\Development\code\designhelper\bin\x86\Debug\designhelper.exe
+D:\Development\code\designhelper\bin\x86\Debug\designhelper.pdb
+D:\Development\code\designhelper\bin\x86\Debug\Newtonsoft.Json.dll
+D:\Development\code\designhelper\bin\x86\Debug\System.Data.SQLite.dll
+D:\Development\code\designhelper\bin\x86\Debug\Newtonsoft.Json.xml
+D:\Development\code\designhelper\bin\x86\Debug\System.Data.SQLite.xml
+D:\Development\code\designhelper\obj\x86\Debug\designhelper.csprojResolveAssemblyReference.cache
+D:\Development\code\designhelper\obj\x86\Debug\designhelper.Form1.resources
+D:\Development\code\designhelper\obj\x86\Debug\designhelper.Properties.Resources.resources
+D:\Development\code\designhelper\obj\x86\Debug\designhelper.csproj.GenerateResource.Cache
+D:\Development\code\designhelper\obj\x86\Debug\designhelper.exe
+D:\Development\code\designhelper\obj\x86\Debug\designhelper.pdb

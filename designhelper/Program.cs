@@ -14,8 +14,6 @@ namespace designhelper
         [STAThread]
         static void Main()
         {
-            Database db = new Database();
-            db.InitDatabase();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
