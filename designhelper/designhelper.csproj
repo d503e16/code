@@ -82,10 +82,13 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GameDto.cs" />
+    <Compile Include="PlayerDto.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="ProgramDB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RecentGameDto.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
