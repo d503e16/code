@@ -87,24 +87,21 @@ namespace designhelper
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var data = (JObject)JsonConvert.DeserializeObject(json);
-                var games = data["games"];
+                var recentGameDto = JsonConvert.DeserializeObject<RecentGameDto>(json);
 
-                for (int i = 0; i < games.Count(); i++) // games.Count() er 10 i alle tilfælde!
+                foreach (var game in recentGameDto.Games)
                 {
-                    var game = games[i];
-                    var gameMode = games[i]["subType"].Value<string>();
-
+                    var gameMode = game.SubType;
                     // tager kun ranked games
                     if (gameMode == "RANKED_SOLO_5x5" || gameMode == "RANKED_PREMADE_5x5" || gameMode == "RANKED_TEAM_5x5")
                     {
-                        var gameId = games[i]["gameId"].Value<long>();
-                        if (!matchIds.Contains(gameId))
-                            matchIds.Add(gameId);
-                        // adder kun playerIds hvis der er mindre end 110 playerIds (9 ad gangen)
-                        if (playerIds.Count < 110)
-                            Add9playerIds(game);
+                        if (!matchIds.Contains(game.GameId))
+                            matchIds.Add(game.GameId);
                     }
+
+                    // adder kun playerIds hvis der er mindre end 110 playerIds (9 ad gangen)
+                    if (playerIds.Count < 110)
+                        Add9playerIds(game);
                 }
             }
             else if (response.StatusCode == HttpStatusCodeTooManyRequests)
@@ -123,15 +120,12 @@ namespace designhelper
             }
         }
 
-        private void Add9playerIds(JToken game)
+        private void Add9playerIds(GameDto game)
         {
-            var fellowPlayers = game["fellowPlayers"];
-            for (int j = 0; j < fellowPlayers.Count(); j++) // fellowPlayers.Count() er 9 i alle tilfælde!
+            foreach (var player in game.FellowPlayers)
             {
-                var playerId = fellowPlayers[j]["summonerId"].Value<long>();
-                // tilføjer kun hvis listen ikke indeholder allerede
-                if (!playerIds.Contains(playerId))
-                    playerIds.Add(playerId);
+                if(!playerIds.Contains(player.SummonerId))
+                    playerIds.Add(player.SummonerId);
             }
         }
 
