@@ -11,3 +11,16 @@ D:\Development\code\designhelper\obj\x86\Debug\designhelper.Properties.Resources
 D:\Development\code\designhelper\obj\x86\Debug\designhelper.csproj.GenerateResource.Cache
 D:\Development\code\designhelper\obj\x86\Debug\designhelper.exe
 D:\Development\code\designhelper\obj\x86\Debug\designhelper.pdb
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\bin\x86\Debug\designhelper.exe.config
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.exe
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.pdb
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\bin\x86\Debug\designhelper.exe
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\bin\x86\Debug\designhelper.pdb
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\bin\x86\Debug\Newtonsoft.Json.dll
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\bin\x86\Debug\System.Data.SQLite.dll
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\bin\x86\Debug\Newtonsoft.Json.xml
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\bin\x86\Debug\System.Data.SQLite.xml
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.csprojResolveAssemblyReference.cache
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.Form1.resources
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.Properties.Resources.resources
+C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.csproj.GenerateResource.Cache

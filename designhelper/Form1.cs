@@ -26,6 +26,7 @@ namespace designhelper
         int requestCounter = 0;
         int tenSecondsInMs = 10000;
 
+        private List<string> info = new List<string>();
         private List<long> playerIds;
         private List<long> matchIds;
         private Dictionary<long, string> matchData;
@@ -92,13 +93,18 @@ namespace designhelper
                 for (int i = 0; i < games.Count(); i++) // games.Count() er 10 i alle tilfælde!
                 {
                     var game = games[i];
+                    var gameMode = games[i]["subType"].Value<string>();
 
-                    var gameId = games[i]["gameId"].Value<long>();
-                    if (!matchIds.Contains(gameId))
-                        matchIds.Add(gameId);
-                    // adder kun playerIds hvis der er mindre end 110 playerIds (9 ad gangen)
-                    if (playerIds.Count < 110)
-                        Add9playerIds(game);
+                    // tager kun ranked games
+                    if (gameMode == "RANKED_SOLO_5x5" || gameMode == "RANKED_PREMADE_5x5" || gameMode == "RANKED_TEAM_5x5")
+                    {
+                        var gameId = games[i]["gameId"].Value<long>();
+                        if (!matchIds.Contains(gameId))
+                            matchIds.Add(gameId);
+                        // adder kun playerIds hvis der er mindre end 110 playerIds (9 ad gangen)
+                        if (playerIds.Count < 110)
+                            Add9playerIds(game);
+                    }
                 }
             }
             else if (response.StatusCode == HttpStatusCodeTooManyRequests)
@@ -165,6 +171,22 @@ namespace designhelper
             matchData = new Dictionary<long, string>();
 
             db.InitDatabase();
+
+            // fill the matchData with existing data
+            string sql = "SELECT * FROM matchTable";
+            using (SQLiteCommand cmd = new SQLiteCommand(sql, db.m_dbConnection))
+            {
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        matchData[(long)reader["matchId"]] = (string)reader["match"];
+                    }
+                }
+            }
+
+            if (matchData.Count > 1000)
+                getMatchesButton.Enabled = false;
         }
 
         private async Task WaitTenSecondsIfTooManyRequests()
@@ -203,6 +225,231 @@ namespace designhelper
             {
                 await Task.Delay(1000);
             }
+        }
+
+        private void kdaButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                double kdaTeamA = 0;
+                double kdaTeamB = 0;
+
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                foreach (var p in match.Participants)
+                {
+                    double kda = 0;
+                    if (p.Stats.Deaths != 0)
+                        kda += ((double)p.Stats.Kills + p.Stats.Assists) / p.Stats.Deaths;
+                    else
+                        kda += (double)p.Stats.Kills + p.Stats.Assists;
+
+                    if (p.TeamId == 100) kdaTeamA += kda;
+                    else kdaTeamB += kda;
+                }
+
+                if (kdaTeamA > kdaTeamB && teamA.Winner == true) trueCases += 1;
+                else if (kdaTeamB > kdaTeamA && teamB.Winner == true) trueCases += 1;
+            }
+
+            MessageBox.Show("Holdet med højest KDA vinder i gennemsnit " + (double)trueCases / matchData.Count() * 100 + "% af spillene");            
+        }
+
+        private void firstTowerButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                if (teamA.Winner == true && teamA.FirstTower == true) trueCases += 1;
+                if (teamB.Winner == true && teamB.FirstTower == true) trueCases += 1;
+            }
+
+            MessageBox.Show("Holdet der får first tower vinder i gennemsnit " + (double)trueCases / matchData.Count() * 100 + "% af spillene");
+        }
+
+        private void firstBloodButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                if (teamA.Winner == true && teamA.FirstBlood == true) trueCases += 1;
+                if (teamB.Winner == true && teamB.FirstBlood == true) trueCases += 1;
+            }
+
+            MessageBox.Show("Holdet der får first tower vinder i gennemsnit " + (double)trueCases / matchData.Count() * 100 + "% af spillene");
+        }
+
+        private void killParticipationButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                long killsTeamA = 0;
+                long killsTeamB = 0;
+                double killParticipationTeamA = 0;
+                double killParticipationTeamB = 0;
+
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                // udregner total team kills
+                foreach (var p in match.Participants)
+                {
+                    if (p.TeamId == 100) killsTeamA += p.Stats.Kills;
+                    else killsTeamB += p.Stats.Kills;
+                }
+
+                // udregner samlet kill participation for hvert hold
+                foreach (var p in match.Participants)
+                {
+                    var participation = ((double)p.Stats.Kills + p.Stats.Assists) / killsTeamA;
+                    if (p.TeamId == 100) killParticipationTeamA += participation;
+                    else killParticipationTeamB += participation;
+                }
+
+                if (killParticipationTeamA > killParticipationTeamB && teamA.Winner == true) trueCases += 1;
+                else if (killParticipationTeamB > killParticipationTeamA && teamB.Winner == true) trueCases += 1;
+            }
+
+            MessageBox.Show("Holdet med bedst kill participation vinder i gennemsnit " + (double)trueCases / matchData.Count() * 100 + "% af spillene");
+        }
+
+        private void baronKillsButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int usedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                if (teamA.BaronKills + teamB.BaronKills > 0)
+                {
+                    if (teamA.BaronKills > teamB.BaronKills && teamA.Winner == true) trueCases += 1;
+                    else if (teamB.BaronKills > teamA.BaronKills && teamB.Winner == true) trueCases += 1;
+
+                    usedCases += 1;
+                }
+            }
+
+            MessageBox.Show("Holdet med flest baron kills vinder i gennemsnit " + (double)trueCases / usedCases * 100 + "% af spillene (" + trueCases + " ud af " + usedCases + ")");
+        }
+
+        private void dragonKillsButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int usedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                if (teamA.DragonKills + teamB.DragonKills > 0)
+                {
+                    if (teamA.DragonKills > teamB.DragonKills && teamA.Winner == true) trueCases += 1;
+                    else if (teamB.DragonKills > teamA.DragonKills && teamB.Winner == true) trueCases += 1;
+
+                    usedCases += 1;
+                }
+            }
+
+            MessageBox.Show("Holdet med flest dragon kills vinder i gennemsnit " + (double)trueCases / usedCases * 100 + "% af spillene (" + trueCases + " ud af " + usedCases + ")");
+        }
+
+        private void baronAndBaronKillsButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int usedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                if (teamA.DragonKills + teamA.BaronKills + teamB.DragonKills + teamB.BaronKills > 0)
+                {
+                    if (teamA.DragonKills + teamA.BaronKills > teamB.DragonKills + teamB.BaronKills && teamA.Winner == true) trueCases += 1;
+                    else if (teamA.DragonKills + teamA.BaronKills < teamB.DragonKills + teamB.BaronKills && teamB.Winner == true) trueCases += 1;
+
+                    usedCases += 1;
+                }
+            }
+
+            MessageBox.Show("Holdet med flest dragon og baron kills vinder i gennemsnit " + (double)trueCases / usedCases * 100 + "% af spillene (" + trueCases + " ud af " + usedCases + ")");
+        }
+
+        private void creepsButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                long creepsTeamA = 0;
+                long creepsTeamB = 0;
+
+                foreach (var p in match.Participants)
+                {
+                    if (p.TeamId == 100) creepsTeamA += p.Stats.MinionsKilled + p.Stats.NeutralMinionsKilled;
+                    else creepsTeamB += p.Stats.MinionsKilled + p.Stats.NeutralMinionsKilled;
+                }
+
+                if (creepsTeamA > creepsTeamB && teamA.Winner == true) trueCases += 1;
+                else if (creepsTeamB > creepsTeamA && teamB.Winner == true) trueCases += 1;
+            }
+
+            MessageBox.Show("Holdet med flest creep kills vinder i gennemsnit " + (double)trueCases / matchData.Count * 100 + "% af spillene");
+        }
+
+        private void wardsSupportButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                Team teamA = match.Teams.Find(t => t.TeamId == 100);
+                Team teamB = match.Teams.Find(t => t.TeamId == 200);
+
+                long wardsScoreTeamA = 0;
+                long wardsScoreTeamB = 0;
+
+                foreach (var p in match.Participants)
+                {
+                    if (p.TimeLine.Role == "DUO_SUPPORT")
+                    {
+                        long wardScore = p.Stats.WardsKilled + p.Stats.WardsPlaced;
+                        if (p.TeamId == 100) wardsScoreTeamA += wardScore;
+                        else wardsScoreTeamB += wardScore;
+                    }
+                }
+
+                if (wardsScoreTeamA > wardsScoreTeamB && teamA.Winner == true) trueCases += 1;
+                else if (wardsScoreTeamB > wardsScoreTeamA && teamB.Winner == true) trueCases += 1;
+            }
+
+            MessageBox.Show("Holdet med supporten der dræber og placerer flest wards vinder i gennemsnit " + (double)trueCases / matchData.Count * 100 + "% af spillene");
         }
     }
 }
