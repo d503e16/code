@@ -431,7 +431,7 @@ namespace designhelper
 
                 foreach (var p in match.Participants)
                 {
-                    if (p.TimeLine.Role == "DUO_SUPPORT")
+                    if (p.Timeline.Role == "DUO_SUPPORT")
                     {
                         long wardScore = p.Stats.WardsKilled + p.Stats.WardsPlaced;
                         if (p.TeamId == 100) wardsScoreTeamA += wardScore;
@@ -444,6 +444,48 @@ namespace designhelper
             }
 
             MessageBox.Show("Holdet med supporten der dræber og placerer flest wards vinder i gennemsnit " + (double)trueCases / matchData.Count * 100 + "% af spillene");
+        }
+
+        private void structureDmgButton_Click(object sender, EventArgs e)
+        {
+            // Den findes under recentgames i GameDto objekter
+        }
+
+        private void minionsPrMinAdcButton_Click(object sender, EventArgs e)
+        {
+            string result = "";
+
+            for (double minionsPr2Min = 1; minionsPr2Min < 21; minionsPr2Min++)
+            {
+                int trueCases = 0;
+                int usedCases = 0;
+                foreach (var val in matchData.Values)
+                {
+                    var match = JsonConvert.DeserializeObject<Match>(val);
+                    var winningTeam = match.Teams.Find(t => t.Winner == true);
+                    var adcTeamA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_CARRY");
+                    var adcTeamB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_CARRY");
+
+                    if (adcTeamA != null && adcTeamB != null)
+                    {
+                        double csAdcTeamA = adcTeamA.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamA.Timeline.CreepsPerMinDeltas.TenToTwenty;
+                        double csAdcTeamB = adcTeamB.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamB.Timeline.CreepsPerMinDeltas.TenToTwenty;
+                        if (csAdcTeamA >= minionsPr2Min && csAdcTeamA > csAdcTeamB)
+                        {
+                            usedCases += 1;
+                            if (adcTeamA.TeamId == winningTeam.TeamId) trueCases += 1;
+                        }
+                        else if (csAdcTeamB >= minionsPr2Min && csAdcTeamB > csAdcTeamA)
+                        {
+                            usedCases += 1;
+                            if (adcTeamB.TeamId == winningTeam.TeamId) trueCases += 1;
+                        }
+                    }
+                }
+                result += "Når adc har mere end " + minionsPr2Min / 2 + " creeps pr min vinder holdet " + Math.Round(((double)trueCases / usedCases) * 100, 2) + "% af spillene (" + trueCases + "/" + usedCases + ")\n";
+            }
+
+            MessageBox.Show(result);
         }
     }
 }

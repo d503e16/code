@@ -40,11 +40,13 @@
             this.baronAndBaronKillsButton = new System.Windows.Forms.Button();
             this.creepsButton = new System.Windows.Forms.Button();
             this.wardsSupportButton = new System.Windows.Forms.Button();
+            this.structureDmgButton = new System.Windows.Forms.Button();
+            this.minionsPrMinAdcButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // getMatchesButton
             // 
-            this.getMatchesButton.Location = new System.Drawing.Point(249, 342);
+            this.getMatchesButton.Location = new System.Drawing.Point(13, 795);
             this.getMatchesButton.Name = "getMatchesButton";
             this.getMatchesButton.Size = new System.Drawing.Size(200, 51);
             this.getMatchesButton.TabIndex = 0;
@@ -54,14 +56,14 @@
             // 
             // summonerIdInput
             // 
-            this.summonerIdInput.Location = new System.Drawing.Point(249, 305);
+            this.summonerIdInput.Location = new System.Drawing.Point(13, 763);
             this.summonerIdInput.Name = "summonerIdInput";
             this.summonerIdInput.Size = new System.Drawing.Size(198, 26);
             this.summonerIdInput.TabIndex = 1;
             // 
             // fillDbWithMatchInfo
             // 
-            this.fillDbWithMatchInfo.Location = new System.Drawing.Point(249, 343);
+            this.fillDbWithMatchInfo.Location = new System.Drawing.Point(13, 795);
             this.fillDbWithMatchInfo.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.fillDbWithMatchInfo.Name = "fillDbWithMatchInfo";
             this.fillDbWithMatchInfo.Size = new System.Drawing.Size(200, 49);
@@ -73,7 +75,7 @@
             // 
             // kdaButton
             // 
-            this.kdaButton.Location = new System.Drawing.Point(43, 46);
+            this.kdaButton.Location = new System.Drawing.Point(43, 101);
             this.kdaButton.Name = "kdaButton";
             this.kdaButton.Size = new System.Drawing.Size(148, 49);
             this.kdaButton.TabIndex = 3;
@@ -83,7 +85,7 @@
             // 
             // firstTowerButton
             // 
-            this.firstTowerButton.Location = new System.Drawing.Point(197, 46);
+            this.firstTowerButton.Location = new System.Drawing.Point(659, 46);
             this.firstTowerButton.Name = "firstTowerButton";
             this.firstTowerButton.Size = new System.Drawing.Size(148, 49);
             this.firstTowerButton.TabIndex = 4;
@@ -93,7 +95,7 @@
             // 
             // firstBloodButton
             // 
-            this.firstBloodButton.Location = new System.Drawing.Point(351, 46);
+            this.firstBloodButton.Location = new System.Drawing.Point(505, 46);
             this.firstBloodButton.Name = "firstBloodButton";
             this.firstBloodButton.Size = new System.Drawing.Size(148, 49);
             this.firstBloodButton.TabIndex = 5;
@@ -103,7 +105,7 @@
             // 
             // killParticipationButton
             // 
-            this.killParticipationButton.Location = new System.Drawing.Point(505, 46);
+            this.killParticipationButton.Location = new System.Drawing.Point(197, 101);
             this.killParticipationButton.Name = "killParticipationButton";
             this.killParticipationButton.Size = new System.Drawing.Size(148, 49);
             this.killParticipationButton.TabIndex = 6;
@@ -113,7 +115,7 @@
             // 
             // baronKillsButton
             // 
-            this.baronKillsButton.Location = new System.Drawing.Point(43, 101);
+            this.baronKillsButton.Location = new System.Drawing.Point(43, 46);
             this.baronKillsButton.Name = "baronKillsButton";
             this.baronKillsButton.Size = new System.Drawing.Size(148, 49);
             this.baronKillsButton.TabIndex = 7;
@@ -123,7 +125,7 @@
             // 
             // dragonKillsButton
             // 
-            this.dragonKillsButton.Location = new System.Drawing.Point(197, 101);
+            this.dragonKillsButton.Location = new System.Drawing.Point(197, 46);
             this.dragonKillsButton.Name = "dragonKillsButton";
             this.dragonKillsButton.Size = new System.Drawing.Size(148, 49);
             this.dragonKillsButton.TabIndex = 8;
@@ -133,7 +135,8 @@
             // 
             // baronAndBaronKillsButton
             // 
-            this.baronAndBaronKillsButton.Location = new System.Drawing.Point(351, 101);
+            this.baronAndBaronKillsButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.baronAndBaronKillsButton.Location = new System.Drawing.Point(351, 46);
             this.baronAndBaronKillsButton.Name = "baronAndBaronKillsButton";
             this.baronAndBaronKillsButton.Size = new System.Drawing.Size(148, 49);
             this.baronAndBaronKillsButton.TabIndex = 9;
@@ -143,7 +146,7 @@
             // 
             // creepsButton
             // 
-            this.creepsButton.Location = new System.Drawing.Point(505, 101);
+            this.creepsButton.Location = new System.Drawing.Point(1375, 12);
             this.creepsButton.Name = "creepsButton";
             this.creepsButton.Size = new System.Drawing.Size(148, 49);
             this.creepsButton.TabIndex = 10;
@@ -153,7 +156,7 @@
             // 
             // wardsSupportButton
             // 
-            this.wardsSupportButton.Location = new System.Drawing.Point(43, 156);
+            this.wardsSupportButton.Location = new System.Drawing.Point(43, 453);
             this.wardsSupportButton.Name = "wardsSupportButton";
             this.wardsSupportButton.Size = new System.Drawing.Size(148, 49);
             this.wardsSupportButton.TabIndex = 11;
@@ -161,11 +164,33 @@
             this.wardsSupportButton.UseVisualStyleBackColor = true;
             this.wardsSupportButton.Click += new System.EventHandler(this.wardsSupportButton_Click);
             // 
+            // structureDmgButton
+            // 
+            this.structureDmgButton.Location = new System.Drawing.Point(1385, 809);
+            this.structureDmgButton.Name = "structureDmgButton";
+            this.structureDmgButton.Size = new System.Drawing.Size(148, 49);
+            this.structureDmgButton.TabIndex = 12;
+            this.structureDmgButton.Text = "Structure Dmg";
+            this.structureDmgButton.UseVisualStyleBackColor = true;
+            this.structureDmgButton.Click += new System.EventHandler(this.structureDmgButton_Click);
+            // 
+            // minionsPrMinAdcButton
+            // 
+            this.minionsPrMinAdcButton.Location = new System.Drawing.Point(43, 218);
+            this.minionsPrMinAdcButton.Name = "minionsPrMinAdcButton";
+            this.minionsPrMinAdcButton.Size = new System.Drawing.Size(148, 49);
+            this.minionsPrMinAdcButton.TabIndex = 13;
+            this.minionsPrMinAdcButton.Text = "Minions pr min";
+            this.minionsPrMinAdcButton.UseVisualStyleBackColor = true;
+            this.minionsPrMinAdcButton.Click += new System.EventHandler(this.minionsPrMinAdcButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(692, 472);
+            this.ClientSize = new System.Drawing.Size(1535, 858);
+            this.Controls.Add(this.minionsPrMinAdcButton);
+            this.Controls.Add(this.structureDmgButton);
             this.Controls.Add(this.wardsSupportButton);
             this.Controls.Add(this.creepsButton);
             this.Controls.Add(this.baronAndBaronKillsButton);
@@ -200,6 +225,8 @@
         private System.Windows.Forms.Button baronAndBaronKillsButton;
         private System.Windows.Forms.Button creepsButton;
         private System.Windows.Forms.Button wardsSupportButton;
+        private System.Windows.Forms.Button structureDmgButton;
+        private System.Windows.Forms.Button minionsPrMinAdcButton;
     }
 }
 

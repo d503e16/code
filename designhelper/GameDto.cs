@@ -11,5 +11,6 @@ namespace designhelper
         public long GameId { get; set; }
         public string SubType { get; set; }
         public List<PlayerDto> FellowPlayers { get; set; }
+        public long TotalDamageDealtToBuildings { get; set; }
     }
 }

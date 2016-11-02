@@ -12,5 +12,6 @@ namespace designhelper
         public List<Frame> Frames { get; set; }
         public string Role { get; set; }
         public string Lane { get; set; }
+        public ParticipantTimelineData CreepsPerMinDeltas { get; set; }
     }
 }

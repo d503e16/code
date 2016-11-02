@@ -10,6 +10,6 @@ namespace designhelper
     {
         public Stats Stats { get; set; }
         public int TeamId { get; set; }
-        public ParticipantTimeline TimeLine { get; set; }
+        public ParticipantTimeline Timeline { get; set; }
     }
 }
