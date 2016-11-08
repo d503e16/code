@@ -13,5 +13,6 @@ namespace designhelper
         public string Role { get; set; }
         public string Lane { get; set; }
         public ParticipantTimelineData CreepsPerMinDeltas { get; set; }
+        public ParticipantTimelineData CsDiffPerMinDeltas { get; set; }
     }
 }

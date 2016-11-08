@@ -15,5 +15,7 @@ namespace designhelper
         public long NeutralMinionsKilled { get; set; }
         public long WardsKilled { get; set; }
         public long WardsPlaced { get; set; }
+        public long TotalDamageDealtToChampions { get; set; }
+        public long NeutralMinionsKilledEnemyJungle { get; set; }
     }
 }
