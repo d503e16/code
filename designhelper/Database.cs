@@ -25,11 +25,17 @@ namespace designhelper
 		// A method for opening the conection to the database file
 		public void InitDatabase()
 		{
-			string file = AppDomain.CurrentDomain.BaseDirectory + "LolRank" + ".sqlite";
+		    string file =
+		        Directory.GetParent(
+		            Directory.GetParent(
+                        Directory.GetParent(
+                            Environment.CurrentDirectory).ToString()
+                        ).ToString()
+                    ) + "\\LolRank.sqlite";
 			if (!File.Exists(file))
 				SQLiteConnection.CreateFile("LolRank" + ".sqlite");
 
-			m_dbConnection = new SQLiteConnection("Data Source=" + "LolRank" + ".sqlite;Version=3;");
+			m_dbConnection = new SQLiteConnection("Data Source=" + file + ";Version=3;");
 			m_dbConnection.Open();
 
 			CreateTables();
