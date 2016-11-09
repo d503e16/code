@@ -455,15 +455,14 @@ namespace designhelper
 
         private void minionsPrMinAdcButton_Click(object sender, EventArgs e)
         {
-            // når adc har flere end x minions pr minut og vinder
-            const int x = 15;
+            // når adc har flere cs de første 20min end modstander adc
             int removedCases = 0;
             int trueCases = 0;
 
             foreach (var val in matchData.Values)
             {
                 var match = JsonConvert.DeserializeObject<Match>(val);
-                var winningTeam = match.Teams.Find(t => t.Winner == true);
+                var winningTeam = match.Teams.Find(t => t.Winner);
                 var adcTeamA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_CARRY");
                 var adcTeamB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_CARRY");
 
@@ -472,22 +471,14 @@ namespace designhelper
                     double csAdcTeamA = adcTeamA.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamA.Timeline.CreepsPerMinDeltas.TenToTwenty;
                     double csAdcTeamB = adcTeamB.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamB.Timeline.CreepsPerMinDeltas.TenToTwenty;
 
-                    // hvis begge har over x minions pr min kigger vi ikke på det
-                    if (csAdcTeamA >= x && csAdcTeamB >= x) removedCases += 1;
-                    // hvis der kun er 1
-                    else if (csAdcTeamA >= x || csAdcTeamB >= x)
-                    {
-                        if (csAdcTeamA >= x && adcTeamA.TeamId == winningTeam.TeamId) trueCases += 1;
-                        else if (csAdcTeamB >= x && adcTeamB.TeamId == winningTeam.TeamId) trueCases += 1;
-                    }
-                    // hvis der er ingen
-                    else removedCases += 1;
+                    if (csAdcTeamA > csAdcTeamB && winningTeam.TeamId == 100 ||
+                        csAdcTeamB > csAdcTeamA && winningTeam.TeamId == 200) trueCases += 1;
                 }
                 else removedCases += 1;
             }
 
-            MessageBox.Show("Når adc har mere end " + (double)x / 2 + " minions pr min\nvinder holdet " +
-                (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene ("
+            MessageBox.Show("Når adc har flere cs de første 20min end modstander adc\nvinder holdet " +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene ("
                 + trueCases + "/" + (matchData.Count - removedCases) + ")");
         }
 
@@ -502,19 +493,19 @@ namespace designhelper
 
                 Team winningTeam = match.Teams.Find(t => t.Winner == true);
                 Participant adcTeamA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_CARRY");
+                Participant adcTeamB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_CARRY");
 
-                if (adcTeamA != null && adcTeamA.Timeline.CsDiffPerMinDeltas != null)
+                if (adcTeamA != null && adcTeamB != null)
                 {
-                    var csDiffAdcTeamA = adcTeamA.Timeline.CsDiffPerMinDeltas.ZeroToTen + 
-                        adcTeamA.Timeline.CsDiffPerMinDeltas.TenToTwenty;
-                    if ((csDiffAdcTeamA > 0 && adcTeamA.TeamId == winningTeam.TeamId) ||
-                        (csDiffAdcTeamA < 0 && adcTeamA.TeamId != winningTeam.TeamId))
-                        trueCases += 1;
+                    if (adcTeamA.Stats.MinionsKilled > adcTeamB.Stats.MinionsKilled && winningTeam.TeamId == 100 ||
+                        adcTeamB.Stats.MinionsKilled > adcTeamA.Stats.MinionsKilled && winningTeam.TeamId == 200)
+                        trueCases += 1; 
                 }
                 else removedCases += 1;
             }
 
-            MessageBox.Show("Når adc har flere cs end modstander adc\nvinder holdet " + (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene");
+            MessageBox.Show("Når adc har flere cs end modstander adc\nvinder holdet " + 
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene");
         }
 
         private void dmgToChampsButton_Click(object sender, EventArgs e)
@@ -540,7 +531,8 @@ namespace designhelper
                 else removedCases += 1;
             }
 
-            MessageBox.Show("Når adc har givet mere skade til champs end modstander adc\nvinder holdet " + (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene");
+            MessageBox.Show("Når adc har givet mere skade til champs end modstander adc\nvinder holdet " 
+                + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene");
         }
 
         private void assistsSupportButton_Click(object sender, EventArgs e)
@@ -657,7 +649,6 @@ namespace designhelper
 
         private void minionsPrMinTopButton_Click(object sender, EventArgs e)
         {
-            const int x = 15;
             int removedCases = 0;
             int trueCases = 0;
 
@@ -673,19 +664,12 @@ namespace designhelper
                     double csTopTeamA = topA.Timeline.CreepsPerMinDeltas.ZeroToTen + topA.Timeline.CreepsPerMinDeltas.TenToTwenty;
                     double csTopTeamB = topB.Timeline.CreepsPerMinDeltas.ZeroToTen + topB.Timeline.CreepsPerMinDeltas.TenToTwenty;
 
-                    // hvis begge har over x minions pr min kigger vi ikke på det
-                    if (csTopTeamA >= x && csTopTeamB >= x) removedCases += 1;
-                    // hvis der kun er 1
-                    else if (csTopTeamA >= x || csTopTeamB >= x) {
-                        if (csTopTeamA >= x && winningTeam.TeamId == 100 ||
-                            csTopTeamB >= x && winningTeam.TeamId == 200) trueCases += 1;
-                    }
-                    // hvis der er ingen
-                    else removedCases += 1;
+                    if (csTopTeamA > csTopTeamB && winningTeam.TeamId == 100 ||
+                        csTopTeamB > csTopTeamA && winningTeam.TeamId == 200) trueCases += 1;
                 }
                 else removedCases += 1;
             }
-            MessageBox.Show("Når top har flere end " + (double)x / 2 + " cs vinder de " + (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene");
+            MessageBox.Show("Når top har flere cs på 20m end modstander top vinder de " + (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene");
 
         }
 
@@ -699,13 +683,13 @@ namespace designhelper
                 var match = JsonConvert.DeserializeObject<Match>(val);
 
                 var topA = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 100);
+                var topB = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 200);
                 var winningTeam = match.Teams.Find(t => t.Winner);
 
                 if (topA != null && topA.Timeline.CsDiffPerMinDeltas != null)
                 {
-                    var csDiffTopA = topA.Timeline.CsDiffPerMinDeltas.ZeroToTen + topA.Timeline.CsDiffPerMinDeltas.TenToTwenty;
-                    if (csDiffTopA > 0 && winningTeam.TeamId == 100 ||
-                        csDiffTopA < 0 && winningTeam.TeamId == 200) trueCases += 1;
+                    if (topA.Stats.MinionsKilled > topB.Stats.MinionsKilled && winningTeam.TeamId == 100 ||
+                        topB.Stats.MinionsKilled < topA.Stats.MinionsKilled && winningTeam.TeamId == 200) trueCases += 1;
                 }
                 else removedCases += 1;
             }
@@ -859,7 +843,6 @@ namespace designhelper
 
         private void minionsPrMinMidButton_Click(object sender, EventArgs e)
         {
-            const int x = 15;
             int removedCases = 0;
             int trueCases = 0;
 
@@ -872,25 +855,14 @@ namespace designhelper
 
                 if (midA != null && midB != null)
                 {
-                    double csMidTeamA = midA.Timeline.CreepsPerMinDeltas.ZeroToTen + midA.Timeline.CreepsPerMinDeltas.TenToTwenty;
-                    double csMidTeamB = midB.Timeline.CreepsPerMinDeltas.ZeroToTen + midB.Timeline.CreepsPerMinDeltas.TenToTwenty;
-
-                    // hvis begge har over x minions pr min kigger vi ikke på det
-                    if (csMidTeamA >= x && csMidTeamB >= x) removedCases += 1;
-                    // hvis der kun er 1
-                    else if (csMidTeamA >= x || csMidTeamB >= x)
-                    {
-                        if (csMidTeamA >= x && winningTeam.TeamId == 100 ||
-                            csMidTeamB >= x && winningTeam.TeamId == 200) trueCases += 1;
-                    }
-                    // hvis der er ingen
-                    else removedCases += 1;
+                    if (midA.Stats.MinionsKilled > midB.Stats.MinionsKilled && winningTeam.TeamId == 100 ||
+                        midB.Stats.MinionsKilled > midA.Stats.MinionsKilled && winningTeam.TeamId == 200)
+                        trueCases += 1;
                 }
                 else removedCases += 1;
             }
-            MessageBox.Show("Når mid har flere end " + (double)x / 2 + 
-                " cs vinder de " + 
-                (double)trueCases / (matchData.Count - removedCases) * 100 +
+            MessageBox.Show("Når mid har flere cs på 20m end modstander mid vinder de: " +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
                 "% af spillene");
         }
 
@@ -917,7 +889,7 @@ namespace designhelper
             }
 
             MessageBox.Show("Når mid har flere cs end modstander adc\nvinder holdet " 
-                + (double)trueCases / (matchData.Count - removedCases) * 100 +
+                + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
                 "% af spillene");
         }
 
@@ -945,7 +917,7 @@ namespace designhelper
             }
 
             MessageBox.Show("Når mid har givet mere skade til champs end modstander adc\nvinder holdet " +
-                (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene");
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene");
         }
 
         private void wardsMidButton_Click(object sender, EventArgs e)
@@ -1003,7 +975,7 @@ namespace designhelper
             }
 
             MessageBox.Show("Når mid har dræbt flere minions i enemy jungle vinder de\n" +
-                (double)trueCases / (matchData.Count - removedCases) * 100 +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
                 "% af spillene");
         }
 
@@ -1032,7 +1004,7 @@ namespace designhelper
             }
 
             MessageBox.Show("Når jgl har dræbt flere minions i jgl end modstander jgl vinder de\n" +
-                (double)trueCases / (matchData.Count - removedCases) * 100 +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
                 "% af spillene");
         }
 
@@ -1061,7 +1033,7 @@ namespace designhelper
             }
 
             MessageBox.Show("Når jgl har dræbt flere minions i enemy jungle vinder de\n" +
-                (double)trueCases / (matchData.Count - removedCases) * 100 +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
                 "% af spillene");
         }
 
