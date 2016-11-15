@@ -24,3 +24,6 @@ C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\ob
 C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.Form1.resources
 C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.Properties.Resources.resources
 C:\Users\RasmusKrusaa\Documents\Visual Studio 2015\Projects\code\designhelper\obj\x86\Debug\designhelper.csproj.GenerateResource.Cache
+C:\Development\P5\code\designhelper\bin\x86\Debug\designhelper.exe.config
+C:\Development\P5\code\designhelper\obj\x86\Debug\designhelper.exe
+C:\Development\P5\code\designhelper\obj\x86\Debug\designhelper.pdb
