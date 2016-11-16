@@ -9,6 +9,14 @@ namespace Rankingsystem.Classes
     class Participant
     {
         private int teamId;
+        private Role role;
+
+        public Role Roleprop
+        {
+            get { return role; }
+            set { role = value; }
+        }
+
 
         public int TeamId
         {

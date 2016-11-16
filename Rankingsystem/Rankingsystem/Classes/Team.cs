@@ -9,13 +9,12 @@ namespace Rankingsystem.Classes
 {
     class Team
     {
-        private int teamId;
+        private List<Participant> team;
 
-        public int TeamId
-        {
-            get { return teamId; }
-            set { teamId = value; }
+        public List<Participant> Teamprop
+        {   
+            get { return team; }
+            set { team = value; }
         }
-
     }
 }
