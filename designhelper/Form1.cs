@@ -282,7 +282,9 @@ namespace designhelper
                 if (teamB.Winner == true && teamB.FirstBlood == true) trueCases += 1;
             }
 
-            MessageBox.Show("Holdet der får first tower vinder i gennemsnit " + (double)trueCases / matchData.Count() * 100 + "% af spillene");
+            MessageBox.Show("Holdet der får first blood vinder i gennemsnit " +
+                Math.Round((double)trueCases / matchData.Count() * 100, 2) + 
+                "% af spillene");
         }
 
         private void killParticipationButton_Click(object sender, EventArgs e)
@@ -453,39 +455,710 @@ namespace designhelper
 
         private void minionsPrMinAdcButton_Click(object sender, EventArgs e)
         {
-            string result = "";
+            // når adc har flere cs de første 20min end modstander adc
+            int removedCases = 0;
+            int trueCases = 0;
 
-            for (double minionsPr2Min = 1; minionsPr2Min < 21; minionsPr2Min++)
+            foreach (var val in matchData.Values)
             {
-                int trueCases = 0;
-                int usedCases = 0;
-                foreach (var val in matchData.Values)
-                {
-                    var match = JsonConvert.DeserializeObject<Match>(val);
-                    var winningTeam = match.Teams.Find(t => t.Winner == true);
-                    var adcTeamA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_CARRY");
-                    var adcTeamB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_CARRY");
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                var winningTeam = match.Teams.Find(t => t.Winner);
+                var adcTeamA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_CARRY");
+                var adcTeamB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_CARRY");
 
-                    if (adcTeamA != null && adcTeamB != null)
-                    {
-                        double csAdcTeamA = adcTeamA.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamA.Timeline.CreepsPerMinDeltas.TenToTwenty;
-                        double csAdcTeamB = adcTeamB.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamB.Timeline.CreepsPerMinDeltas.TenToTwenty;
-                        if (csAdcTeamA >= minionsPr2Min && csAdcTeamA > csAdcTeamB)
-                        {
-                            usedCases += 1;
-                            if (adcTeamA.TeamId == winningTeam.TeamId) trueCases += 1;
-                        }
-                        else if (csAdcTeamB >= minionsPr2Min && csAdcTeamB > csAdcTeamA)
-                        {
-                            usedCases += 1;
-                            if (adcTeamB.TeamId == winningTeam.TeamId) trueCases += 1;
-                        }
-                    }
+                if (adcTeamA != null && adcTeamB != null)
+                {
+                    double csAdcTeamA = adcTeamA.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamA.Timeline.CreepsPerMinDeltas.TenToTwenty;
+                    double csAdcTeamB = adcTeamB.Timeline.CreepsPerMinDeltas.ZeroToTen + adcTeamB.Timeline.CreepsPerMinDeltas.TenToTwenty;
+
+                    if (csAdcTeamA > csAdcTeamB && winningTeam.TeamId == 100 ||
+                        csAdcTeamB > csAdcTeamA && winningTeam.TeamId == 200) trueCases += 1;
                 }
-                result += "Når adc har mere end " + minionsPr2Min / 2 + " creeps pr min vinder holdet " + Math.Round(((double)trueCases / usedCases) * 100, 2) + "% af spillene (" + trueCases + "/" + usedCases + ")\n";
+                else removedCases += 1;
             }
 
-            MessageBox.Show(result);
+            MessageBox.Show("Når adc har flere cs de første 20min end modstander adc\nvinder holdet " +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene ("
+                + trueCases + "/" + (matchData.Count - removedCases) + ")");
+        }
+
+        private void moreMinionsButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                Match match = JsonConvert.DeserializeObject<Match>(val);
+
+                Team winningTeam = match.Teams.Find(t => t.Winner == true);
+                Participant adcTeamA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_CARRY");
+                Participant adcTeamB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_CARRY");
+
+                if (adcTeamA != null && adcTeamB != null)
+                {
+                    if (adcTeamA.Stats.MinionsKilled > adcTeamB.Stats.MinionsKilled && winningTeam.TeamId == 100 ||
+                        adcTeamB.Stats.MinionsKilled > adcTeamA.Stats.MinionsKilled && winningTeam.TeamId == 200)
+                        trueCases += 1; 
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når adc har flere cs end modstander adc\nvinder holdet " + 
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene");
+        }
+
+        private void dmgToChampsButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                Match match = JsonConvert.DeserializeObject<Match>(val);
+
+                Participant adcTeamA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_CARRY");
+                Participant adcTeamB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_CARRY");
+                Team winningTeam = match.Teams.Find(t => t.Winner == true);
+
+                if (adcTeamA != null && adcTeamB != null)
+                {
+                    if ((adcTeamA.Stats.TotalDamageDealtToChampions > adcTeamB.Stats.TotalDamageDealtToChampions &&
+                        adcTeamA.TeamId == winningTeam.TeamId) ||
+                        (adcTeamB.Stats.TotalDamageDealtToChampions > adcTeamA.Stats.TotalDamageDealtToChampions &&
+                        adcTeamB.TeamId == winningTeam.TeamId)) trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når adc har givet mere skade til champs end modstander adc\nvinder holdet " 
+                + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene");
+        }
+
+        private void assistsSupportButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var m = JsonConvert.DeserializeObject<Match>(val);
+
+                var winningTeam = m.Teams.Find(t => t.Winner == true);
+                var suppTeamA = m.Participants.Find(p => p.TeamId == 100 && p.Timeline.Role == "DUO_SUPPORT"); 
+                var suppTeamB = m.Participants.Find(p => p.TeamId == 200 && p.Timeline.Role == "DUO_SUPPORT");
+
+                if (suppTeamA != null && suppTeamB != null)
+                {
+                    if (suppTeamA.Stats.Assists > suppTeamA.Stats.Kills &&
+                        suppTeamB.Stats.Assists > suppTeamB.Stats.Kills) removedCases += 1;
+                    else if (suppTeamA.Stats.Assists > suppTeamA.Stats.Kills && suppTeamA.TeamId == winningTeam.TeamId)
+                        trueCases += 1;
+                    else if (suppTeamB.Stats.Assists > suppTeamB.Stats.Kills && suppTeamB.TeamId == winningTeam.TeamId)
+                        trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når supp har flere assists per kills end modstander supp\nvinder holdet " + (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene");
+        }
+
+        private void deathsSupportButton_Click(object sender, EventArgs e)
+        {
+            int trueCasesSupport = 0;
+            int removedCasesSupport = 0;
+            int trueCasesAdc = 0;
+            int removedCasesAdc = 0;
+            int trueCasesMid = 0;
+            int removedCasesMid = 0;
+            int trueCasesTop = 0;
+            int removedCasesTop = 0;
+            int trueCasesJgl = 0;
+            int removedCasesJgl = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var winningTeam = match.Teams.Find(t => t.Winner == true);
+                var suppA = match.Participants.Find(p => p.Timeline.Role == "DUO_SUPPORT" && p.TeamId == 100);
+                var suppB = match.Participants.Find(p => p.Timeline.Role == "DUO_SUPPORT" && p.TeamId == 200);
+                var adcA = match.Participants.Find(p => p.Timeline.Role == "DUO_CARRY" && p.TeamId == 100);
+                var adcB = match.Participants.Find(p => p.Timeline.Role == "DUO_CARRY" && p.TeamId == 200);
+                var topA = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 100);
+                var topB = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 200);
+                var midA = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 100);
+                var midB = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 200);
+                var jglA = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 100);
+                var jglB = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 200);
+
+                if (suppA != null && suppB != null && adcA != null && adcB != null &&
+                    topA != null && topB != null && midA != null && midB != null &&
+                    jglA != null && jglB != null)
+                {
+                    List<Participant> teamA = match.Participants.FindAll(p => p.TeamId == 100);
+                    List<Participant> teamB = match.Participants.FindAll(p => p.TeamId == 200);
+
+                    if (teamA.Max(p => p.Stats.Deaths) == suppA.Stats.Deaths &&
+                        teamB.Max(p => p.Stats.Deaths) == suppB.Stats.Deaths) removedCasesSupport += 1;
+                    else if (teamA.Max(p => p.Stats.Deaths) == suppA.Stats.Deaths && winningTeam.TeamId == 100 ||
+                        teamB.Max(p => p.Stats.Deaths) == suppB.Stats.Deaths && winningTeam.TeamId == 200) trueCasesSupport += 1;
+
+                    if (teamA.Max(p => p.Stats.Deaths) == adcA.Stats.Deaths &&
+                        teamB.Max(p => p.Stats.Deaths) == adcB.Stats.Deaths) removedCasesAdc += 1;
+                    else if (teamA.Max(p => p.Stats.Deaths) == adcA.Stats.Deaths && winningTeam.TeamId == 100||
+                        teamB.Max(p => p.Stats.Deaths) == adcB.Stats.Deaths && winningTeam.TeamId == 200) trueCasesAdc += 1;
+
+                    if (teamA.Max(p => p.Stats.Deaths) == jglA.Stats.Deaths &&
+                        teamB.Max(p => p.Stats.Deaths) == jglB.Stats.Deaths) removedCasesJgl += 1;
+                    else if (teamA.Max(p => p.Stats.Deaths) == jglA.Stats.Deaths && winningTeam.TeamId == 100 ||
+                        teamB.Max(p => p.Stats.Deaths) == jglB.Stats.Deaths && winningTeam.TeamId == 200) trueCasesJgl += 1;
+
+                    if (teamA.Max(p => p.Stats.Deaths) == midA.Stats.Deaths &&
+                        teamB.Max(p => p.Stats.Deaths) == midB.Stats.Deaths) removedCasesMid += 1;
+                    else if (teamA.Max(p => p.Stats.Deaths) == midA.Stats.Deaths && winningTeam.TeamId == 100 ||
+                        teamB.Max(p => p.Stats.Deaths) == midB.Stats.Deaths && winningTeam.TeamId == 200) trueCasesMid += 1;
+
+                    if (teamA.Max(p => p.Stats.Deaths) == topA.Stats.Deaths &&
+                        teamB.Max(p => p.Stats.Deaths) == topB.Stats.Deaths) removedCasesTop += 1;
+                    else if (teamA.Max(p => p.Stats.Deaths) == topA.Stats.Deaths && winningTeam.TeamId == 100 ||
+                        teamB.Max(p => p.Stats.Deaths) == topB.Stats.Deaths && winningTeam.TeamId == 200) trueCasesTop += 1;
+                }
+                else
+                {
+                    removedCasesAdc += 1;
+                    removedCasesJgl += 1;
+                    removedCasesMid += 1;
+                    removedCasesSupport += 1;
+                    removedCasesTop += 1;
+                }
+            }
+
+            MessageBox.Show("Når rolle dør mest på hold vinder de:\n" +
+                "Support: " + Math.Round((double)trueCasesSupport / (matchData.Count - removedCasesSupport) * 100, 2) + "% af spillene" +
+                "(" + trueCasesSupport + "/" + (matchData.Count - removedCasesSupport) + ")\n" +
+                "ADC: " + Math.Round((double)trueCasesAdc / (matchData.Count - removedCasesAdc) * 100, 2) + "% af spillene" +
+                "(" + trueCasesAdc + "/" + (matchData.Count - removedCasesAdc) + ")\n" +
+                "Mid: " + Math.Round((double)trueCasesMid / (matchData.Count - removedCasesMid) * 100, 2) + "% af spillene" +
+                "(" + trueCasesMid + "/" + (matchData.Count - removedCasesMid) + ")\n" +
+                "Top: " + Math.Round((double)trueCasesTop / (matchData.Count - removedCasesTop) * 100, 2) + "% af spillene" +
+                "(" + trueCasesTop + "/" + (matchData.Count - removedCasesTop) + ")\n" +
+                "Jgl: " + Math.Round((double)trueCasesJgl / (matchData.Count - removedCasesJgl) * 100, 2) + "% af spillene" +
+                "(" + trueCasesJgl + "/" + (matchData.Count - removedCasesJgl) + ")\n");
+        }
+
+        private void minionsPrMinTopButton_Click(object sender, EventArgs e)
+        {
+            int removedCases = 0;
+            int trueCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                var winningTeam = match.Teams.Find(t => t.Winner == true);
+                var topA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Lane == "TOP");
+                var topB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Lane == "TOP");
+
+                if (topA != null && topB != null)
+                {
+                    double csTopTeamA = topA.Timeline.CreepsPerMinDeltas.ZeroToTen + topA.Timeline.CreepsPerMinDeltas.TenToTwenty;
+                    double csTopTeamB = topB.Timeline.CreepsPerMinDeltas.ZeroToTen + topB.Timeline.CreepsPerMinDeltas.TenToTwenty;
+
+                    if (csTopTeamA > csTopTeamB && winningTeam.TeamId == 100 ||
+                        csTopTeamB > csTopTeamA && winningTeam.TeamId == 200) trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+            MessageBox.Show("Når top har flere cs på 20m end modstander top vinder de " + (double)trueCases / (matchData.Count - removedCases) * 100 + "% af spillene");
+
+        }
+
+        private void moreMinionsTopButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var topA = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 100);
+                var topB = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 200);
+                var winningTeam = match.Teams.Find(t => t.Winner);
+
+                if (topA != null && topA.Timeline.CsDiffPerMinDeltas != null)
+                {
+                    if (topA.Stats.MinionsKilled > topB.Stats.MinionsKilled && winningTeam.TeamId == 100 ||
+                        topB.Stats.MinionsKilled < topA.Stats.MinionsKilled && winningTeam.TeamId == 200) trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når top har flere cs end modstander top\n" +
+                "vinder holdet " + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2)
+                + "% af spillene");
+        }
+
+        private void wardsTopButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var winningTeam = match.Teams.Find(t => t.Winner);
+                var topA = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 100);
+                var topB = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 200);
+
+                if (topA != null && topB != null)
+                {
+                    long wardsScoreTeamA = topA.Stats.WardsKilled + topA.Stats.WardsPlaced;
+                    long wardsScoreTeamB = topB.Stats.WardsKilled + topB.Stats.WardsPlaced;
+
+                    if (wardsScoreTeamA > wardsScoreTeamB && winningTeam.TeamId == 100 ||
+                        wardsScoreTeamB > wardsScoreTeamA && winningTeam.TeamId == 200) trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Holdet med top der dræber og placerer flest wards\n" +
+                "vinder i gennemsnit " + Math.Round((double)trueCases / matchData.Count * 100, 2)
+                + "% af spillene");
+        }
+
+        private void dmgDealtToChampionsTopButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                Match match = JsonConvert.DeserializeObject<Match>(val);
+
+                Participant topA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Lane == "TOP");
+                Participant topB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Lane == "TOP");
+                Team winningTeam = match.Teams.Find(t => t.Winner == true);
+
+                if (topA != null && topB != null)
+                {
+                    if ((topA.Stats.TotalDamageDealtToChampions > topB.Stats.TotalDamageDealtToChampions &&
+                         winningTeam.TeamId == 100) ||
+                        (topB.Stats.TotalDamageDealtToChampions > topA.Stats.TotalDamageDealtToChampions &&
+                        winningTeam.TeamId == 200)) trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når top har givet mere skade til champs end modstander top\n" +
+                "vinder holdet " + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2)
+                + "% af spillene");
+        }
+
+        private void assistsTopButton_Click(object sender, EventArgs e)
+        {
+            int trueCasesSupport = 0;
+            int removedCasesSupport = 0;
+            int trueCasesAdc = 0;
+            int removedCasesAdc = 0;
+            int trueCasesMid = 0;
+            int removedCasesMid = 0;
+            int trueCasesTop = 0;
+            int removedCasesTop = 0;
+            int trueCasesJgl = 0;
+            int removedCasesJgl = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var winningTeam = match.Teams.Find(t => t.Winner == true);
+                var suppA = match.Participants.Find(p => p.Timeline.Role == "DUO_SUPPORT" && p.TeamId == 100);
+                var suppB = match.Participants.Find(p => p.Timeline.Role == "DUO_SUPPORT" && p.TeamId == 200);
+                var adcA = match.Participants.Find(p => p.Timeline.Role == "DUO_CARRY" && p.TeamId == 100);
+                var adcB = match.Participants.Find(p => p.Timeline.Role == "DUO_CARRY" && p.TeamId == 200);
+                var topA = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 100);
+                var topB = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 200);
+                var midA = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 100);
+                var midB = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 200);
+                var jglA = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 100);
+                var jglB = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 200);
+
+                if (suppA != null && suppB != null && adcA != null && adcB != null &&
+                    topA != null && topB != null && jglA != null && jglB != null &&
+                    midA != null && midB != null)
+                {
+                    List<Participant> teamA = match.Participants.FindAll(p => p.TeamId == 100);
+                    List<Participant> teamB = match.Participants.FindAll(p => p.TeamId == 200);
+
+                    if (teamA.Min(p => p.Stats.Assists) == suppA.Stats.Assists &&
+                        teamB.Min(p => p.Stats.Assists) == suppB.Stats.Assists) removedCasesSupport += 1;
+                    else if (teamA.Min(p => p.Stats.Assists) == suppA.Stats.Assists && winningTeam.TeamId == 100 ||
+                        teamB.Min(p => p.Stats.Assists) == suppB.Stats.Assists && winningTeam.TeamId == 200) trueCasesSupport += 1;
+
+                    if (teamA.Min(p => p.Stats.Assists) == adcA.Stats.Assists &&
+                        teamB.Min(p => p.Stats.Assists) == adcB.Stats.Assists) removedCasesAdc += 1;
+                    else if (teamA.Min(p => p.Stats.Assists) == adcA.Stats.Assists && winningTeam.TeamId == 100 ||
+                        teamB.Min(p => p.Stats.Assists) == adcB.Stats.Assists && winningTeam.TeamId == 200) trueCasesAdc += 1;
+
+                    if (teamA.Min(p => p.Stats.Assists) == jglA.Stats.Assists &&
+                        teamB.Min(p => p.Stats.Assists) == jglB.Stats.Assists) removedCasesJgl += 1;
+                    else if (teamA.Min(p => p.Stats.Assists) == jglA.Stats.Assists && winningTeam.TeamId == 100 ||
+                        teamB.Min(p => p.Stats.Assists) == jglB.Stats.Assists && winningTeam.TeamId == 200) trueCasesJgl += 1;
+
+                    if (teamA.Min(p => p.Stats.Assists) == midA.Stats.Assists &&
+                        teamB.Min(p => p.Stats.Assists) == midB.Stats.Assists) removedCasesMid += 1;
+                    else if (teamA.Min(p => p.Stats.Assists) == midA.Stats.Assists && winningTeam.TeamId == 100 ||
+                        teamB.Min(p => p.Stats.Assists) == midB.Stats.Assists && winningTeam.TeamId == 200) trueCasesMid += 1;
+
+                    if (teamA.Min(p => p.Stats.Assists) == topA.Stats.Assists &&
+                        teamB.Min(p => p.Stats.Assists) == topB.Stats.Assists) removedCasesTop += 1;
+                    else if (teamA.Min(p => p.Stats.Assists) == topA.Stats.Assists && winningTeam.TeamId == 100 ||
+                        teamB.Min(p => p.Stats.Assists) == topB.Stats.Assists && winningTeam.TeamId == 200) trueCasesTop += 1;
+
+                }
+                else
+                {
+                    removedCasesAdc += 1;
+                    removedCasesJgl += 1;
+                    removedCasesMid += 1;
+                    removedCasesSupport += 1;
+                    removedCasesTop += 1;
+                }
+            }
+            
+            MessageBox.Show("Når rolle har færrest assists på hold vinder de:\n" +
+                "Support: " + Math.Round((double)trueCasesSupport / (matchData.Count - removedCasesSupport) * 100, 2) + "% af spillene" +
+                "(" + trueCasesSupport + "/" + (matchData.Count - removedCasesSupport) + ")\n" +
+                "ADC: " + Math.Round((double)trueCasesAdc / (matchData.Count - removedCasesAdc) * 100, 2) + "% af spillene" +
+                "(" + trueCasesAdc + "/" + (matchData.Count - removedCasesAdc) + ")\n" +
+                "Mid: " + Math.Round((double)trueCasesMid / (matchData.Count - removedCasesMid) * 100, 2) + "% af spillene" +
+                "(" + trueCasesMid + "/" + (matchData.Count - removedCasesMid) + ")\n" +
+                "Top: " + Math.Round((double)trueCasesTop / (matchData.Count - removedCasesTop) * 100, 2) + "% af spillene" +
+                "(" + trueCasesTop + "/" + (matchData.Count - removedCasesTop) + ")\n" +
+                "Jgl: " + Math.Round((double)trueCasesJgl / (matchData.Count - removedCasesJgl) * 100, 2) + "% af spillene" +
+                "(" + trueCasesJgl + "/" + (matchData.Count - removedCasesJgl) + ")\n");
+        }
+
+        private void minionsPrMinMidButton_Click(object sender, EventArgs e)
+        {
+            int removedCases = 0;
+            int trueCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                var winningTeam = match.Teams.Find(t => t.Winner == true);
+                var midA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Lane == "MIDDLE");
+                var midB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Lane == "MIDDLE");
+
+                if (midA != null && midB != null)
+                {
+                    if (midA.Stats.MinionsKilled > midB.Stats.MinionsKilled && winningTeam.TeamId == 100 ||
+                        midB.Stats.MinionsKilled > midA.Stats.MinionsKilled && winningTeam.TeamId == 200)
+                        trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+            MessageBox.Show("Når mid har flere cs på 20m end modstander mid vinder de: " +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
+                "% af spillene");
+        }
+
+        private void moreMinionsMidButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+                var winningTeam = match.Teams.Find(t => t.Winner == true);
+                var midA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Lane == "MIDDLE");
+
+                if (midA != null && midA.Timeline.CsDiffPerMinDeltas != null)
+                {
+                    var csDiff = midA.Timeline.CsDiffPerMinDeltas.ZeroToTen +
+                        midA.Timeline.CsDiffPerMinDeltas.TenToTwenty;
+
+                    if (csDiff > 0 && winningTeam.TeamId == 100 ||
+                        csDiff < 0 && winningTeam.TeamId == 200) trueCases += 1; 
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når mid har flere cs end modstander adc\nvinder holdet " 
+                + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
+                "% af spillene");
+        }
+
+        private void dmgToChampsMidButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                Match match = JsonConvert.DeserializeObject<Match>(val);
+
+                Participant midA = match.Participants.Find(p => p.TeamId == 100 && p.Timeline.Lane == "MIDDLE");
+                Participant midB = match.Participants.Find(p => p.TeamId == 200 && p.Timeline.Lane == "MIDDLE");
+                Team winningTeam = match.Teams.Find(t => t.Winner == true);
+
+                if (midA != null && midB != null)
+                {
+                    if ((midA.Stats.TotalDamageDealtToChampions > midB.Stats.TotalDamageDealtToChampions &&
+                        midA.TeamId == winningTeam.TeamId) ||
+                        (midB.Stats.TotalDamageDealtToChampions > midA.Stats.TotalDamageDealtToChampions &&
+                        midB.TeamId == winningTeam.TeamId)) trueCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når mid har givet mere skade til champs end modstander adc\nvinder holdet " +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene");
+        }
+
+        private void wardsMidButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var winningTeam = match.Teams.Find(t => t.Winner);
+                var midA = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 100);
+                var midB = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 200);
+
+                if (midA != null && midB != null)
+                {
+                    long wardsScoreTeamA = midA.Stats.WardsKilled + midA.Stats.WardsPlaced;
+                    long wardsScoreTeamB = midB.Stats.WardsKilled + midB.Stats.WardsPlaced;
+
+                    if (wardsScoreTeamA > wardsScoreTeamB && winningTeam.TeamId == 100 ||
+                        wardsScoreTeamB > wardsScoreTeamA && winningTeam.TeamId == 200) trueCases += 1;
+                    else if (wardsScoreTeamA == wardsScoreTeamB) removedCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Holdet med mid der dræber og placerer flest wards\n" +
+                "vinder i gennemsnit " + Math.Round((double)trueCases / matchData.Count * 100, 2)
+                + "% af spillene");
+        }
+
+        private void enemyJungleMidButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var midA = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 100);
+                var midB = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 200);
+                var winningTeam = match.Teams.Find(t => t.Winner);
+
+                if (midA != null && midB != null)
+                {
+                    if (midA.Stats.NeutralMinionsKilledEnemyJungle > midB.Stats.NeutralMinionsKilledEnemyJungle &&
+                        winningTeam.TeamId == 100 ||
+                        midB.Stats.NeutralMinionsKilledEnemyJungle > midA.Stats.NeutralMinionsKilledEnemyJungle &&
+                        winningTeam.TeamId == 200) trueCases += 1;
+                    else if (midA.Stats.NeutralMinionsKilledEnemyJungle == midB.Stats.NeutralMinionsKilledEnemyJungle) removedCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når mid har dræbt flere minions i enemy jungle vinder de\n" +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
+                "% af spillene");
+        }
+
+        private void monstersKilledJglButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var jglA = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 100);
+                var jglB = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 200);
+                var winningTeam = match.Teams.Find(t => t.Winner);
+
+                if (jglA != null && jglB != null)
+                {
+                    if (jglA.Stats.NeutralMinionsKilled > jglB.Stats.NeutralMinionsKilled &&
+                        winningTeam.TeamId == 100 ||
+                        jglB.Stats.NeutralMinionsKilled > jglA.Stats.NeutralMinionsKilled &&
+                        winningTeam.TeamId == 200) trueCases += 1;
+                    else if (jglA.Stats.NeutralMinionsKilled == jglB.Stats.NeutralMinionsKilled) removedCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når jgl har dræbt flere minions i jgl end modstander jgl vinder de\n" +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
+                "% af spillene");
+        }
+
+        private void enemyJungleJglButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var jglA = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 100);
+                var jglB = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 200);
+                var winningTeam = match.Teams.Find(t => t.Winner);
+
+                if (jglA != null && jglB != null)
+                {
+                    if (jglA.Stats.NeutralMinionsKilledEnemyJungle > jglB.Stats.NeutralMinionsKilledEnemyJungle &&
+                        winningTeam.TeamId == 100 ||
+                        jglB.Stats.NeutralMinionsKilledEnemyJungle > jglA.Stats.NeutralMinionsKilledEnemyJungle &&
+                        winningTeam.TeamId == 200) trueCases += 1;
+                    else if (jglA.Stats.NeutralMinionsKilledEnemyJungle == jglB.Stats.NeutralMinionsKilledEnemyJungle) removedCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Når jgl har dræbt flere minions i enemy jungle vinder de\n" +
+                Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) +
+                "% af spillene");
+        }
+
+        private void wardsJglButton_Click(object sender, EventArgs e)
+        {
+            int trueCases = 0;
+            int removedCases = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var winningTeam = match.Teams.Find(t => t.Winner);
+                var jglA = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 100);
+                var jglB = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 200);
+
+                if (jglA != null && jglB != null)
+                {
+                    long wardsScoreTeamA = jglA.Stats.WardsKilled + jglA.Stats.WardsPlaced;
+                    long wardsScoreTeamB = jglB.Stats.WardsKilled + jglB.Stats.WardsPlaced;
+
+                    if (wardsScoreTeamA > wardsScoreTeamB && winningTeam.TeamId == 100 ||
+                        wardsScoreTeamB > wardsScoreTeamA && winningTeam.TeamId == 200) trueCases += 1;
+                    else if (wardsScoreTeamA == wardsScoreTeamB) removedCases += 1;
+                }
+                else removedCases += 1;
+            }
+
+            MessageBox.Show("Holdet med jgl der dræber og placerer flest wards\n" +
+                "vinder i gennemsnit " + Math.Round((double)trueCases / matchData.Count * 100, 2)
+                + "% af spillene");
+        }
+
+        private void kdaJglButton_Click(object sender, EventArgs e)
+        {
+            int trueCasesSupport = 0;
+            int removedCasesSupport = 0;
+            int trueCasesAdc = 0;
+            int removedCasesAdc = 0;
+            int trueCasesMid = 0;
+            int removedCasesMid = 0;
+            int trueCasesTop = 0;
+            int removedCasesTop = 0;
+            int trueCasesJgl = 0;
+            int removedCasesJgl = 0;
+
+            foreach (var val in matchData.Values)
+            {
+                var match = JsonConvert.DeserializeObject<Match>(val);
+
+                var winningTeam = match.Teams.Find(t => t.Winner == true);
+                var suppA = match.Participants.Find(p => p.Timeline.Role == "DUO_SUPPORT" && p.TeamId == 100);
+                var suppB = match.Participants.Find(p => p.Timeline.Role == "DUO_SUPPORT" && p.TeamId == 200);
+                var adcA = match.Participants.Find(p => p.Timeline.Role == "DUO_CARRY" && p.TeamId == 100);
+                var adcB = match.Participants.Find(p => p.Timeline.Role == "DUO_CARRY" && p.TeamId == 200);
+                var topA = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 100);
+                var topB = match.Participants.Find(p => p.Timeline.Lane == "TOP" && p.TeamId == 200);
+                var midA = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 100);
+                var midB = match.Participants.Find(p => p.Timeline.Lane == "MIDDLE" && p.TeamId == 200);
+                var jglA = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 100);
+                var jglB = match.Participants.Find(p => p.Timeline.Lane == "JUNGLE" && p.TeamId == 200);
+
+                if (suppA != null && suppB != null && adcA != null && adcB != null &&
+                    topA != null && topB != null && midA != null && midB != null &&
+                    jglA != null && jglB != null)
+                {
+                    double kdaSuppA = CalculateKda(suppA);
+                    double kdaSuppB = CalculateKda(suppB);
+                    double kdaAdcA = CalculateKda(adcA);
+                    double kdaAdcB = CalculateKda(adcB);
+                    double kdaMidA = CalculateKda(midA);
+                    double kdaMidB = CalculateKda(midB);
+                    double kdaTopA = CalculateKda(topA);
+                    double kdaTopB = CalculateKda(topB);
+                    double kdaJglA = CalculateKda(jglA);
+                    double kdaJglB = CalculateKda(jglB);
+
+                    if (kdaSuppA > kdaSuppB && winningTeam.TeamId == 100 ||
+                        kdaSuppB > kdaSuppA && winningTeam.TeamId == 200) trueCasesSupport += 1;
+                    else if (kdaSuppA == kdaSuppB) removedCasesSupport += 1;
+
+                    if (kdaAdcA > kdaAdcB && winningTeam.TeamId == 100 ||
+                        kdaAdcB > kdaAdcA && winningTeam.TeamId == 200) trueCasesAdc += 1;
+                    else if (kdaAdcA == kdaAdcB) removedCasesAdc += 1;
+
+                    if (kdaMidA > kdaMidB && winningTeam.TeamId == 100 ||
+                        kdaMidB > kdaMidA && winningTeam.TeamId == 200) trueCasesMid += 1;
+                    else if (kdaMidA == kdaMidB) removedCasesMid += 1;
+
+                    if (kdaTopA > kdaTopB && winningTeam.TeamId == 100 ||
+                        kdaTopB > kdaTopA && winningTeam.TeamId == 200) trueCasesTop += 1;
+                    else if (kdaTopA == kdaTopB) removedCasesTop += 1;
+
+                    if (kdaJglA > kdaJglB && winningTeam.TeamId == 100 ||
+                        kdaJglB > kdaJglA && winningTeam.TeamId == 200) trueCasesJgl += 1;
+                    else if (kdaJglA == kdaJglB) removedCasesJgl += 1;
+                }
+                else
+                {
+                    removedCasesAdc += 1;
+                    removedCasesJgl += 1;
+                    removedCasesMid += 1;
+                    removedCasesSupport += 1;
+                    removedCasesTop += 1;
+                }
+            }
+
+            MessageBox.Show("Når rolle har bedre kda end modstander rolle vinder de:\n" +
+                "Support: " + Math.Round((double)trueCasesSupport / (matchData.Count - removedCasesSupport) * 100, 2) + "% af spillene" +
+                "(" + trueCasesSupport + "/" + (matchData.Count - removedCasesSupport) + ")\n" +
+                "ADC: " + Math.Round((double)trueCasesAdc / (matchData.Count - removedCasesAdc) * 100, 2) + "% af spillene" +
+                "(" + trueCasesAdc + "/" + (matchData.Count - removedCasesAdc) + ")\n" +
+                "Mid: " + Math.Round((double)trueCasesMid / (matchData.Count - removedCasesMid) * 100, 2) + "% af spillene" +
+                "(" + trueCasesMid + "/" + (matchData.Count - removedCasesMid) + ")\n" +
+                "Top: " + Math.Round((double)trueCasesTop / (matchData.Count - removedCasesTop) * 100, 2) + "% af spillene" +
+                "(" + trueCasesTop + "/" + (matchData.Count - removedCasesTop) + ")\n" +
+                "Jgl: " + Math.Round((double)trueCasesJgl / (matchData.Count - removedCasesJgl) * 100, 2) + "% af spillene" +
+                "(" + trueCasesJgl + "/" + (matchData.Count - removedCasesJgl) + ")\n");
+        }
+
+        private double CalculateKda(Participant p)
+        {
+            return p.Stats.Deaths != 0 ? 
+                (double)(p.Stats.Assists + p.Stats.Kills) / p.Stats.Deaths : 
+                (double)p.Stats.Kills + p.Stats.Assists; 
         }
     }
-}//Victor
+}

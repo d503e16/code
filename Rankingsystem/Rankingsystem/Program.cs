@@ -10,7 +10,9 @@ namespace Rankingsystem
     {
         static void Main(string[] args)
         {
-
+            Classes.Database database = new Classes.Database();
+            database.InitDatabase();
+            Console.ReadKey();
         }
     }
 }
