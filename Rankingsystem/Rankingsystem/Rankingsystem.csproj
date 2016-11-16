@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Database.cs" />
-    <Compile Include="Classes\Match.cs" />
     <Compile Include="Classes\Participant.cs" />
     <Compile Include="Classes\Role.cs" />
     <Compile Include="Classes\Roles\Bot.cs" />
