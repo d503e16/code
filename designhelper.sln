@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "designhelper", "designhelper\designhelper.csproj", "{09666126-EB79-4BC6-85EC-A5B22C0E3830}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankingsystem", "Rankingsystem\Rankingsystem\Rankingsystem.csproj", "{25E8D06F-56AC-4F6C-AA6B-3D22B5F4C706}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankingsystem", "Rankingsystem\Rankingsystem.csproj", "{25E8D06F-56AC-4F6C-AA6B-3D22B5F4C706}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
