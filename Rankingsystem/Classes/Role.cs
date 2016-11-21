@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes
 {
-    abstract class Role : Participant
+    abstract class Role
     {
         //Generelle features
         private Boolean firstBlood;
@@ -37,6 +37,5 @@ namespace Rankingsystem.Classes
             get { return firstBlood; }
             set { firstBlood = value; }
         }
-
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Jungle
+    class Jungle : Role
     {
         //Jungle features
         private int ownMonsters;

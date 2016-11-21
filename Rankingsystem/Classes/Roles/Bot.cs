@@ -6,30 +6,30 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Bot
+    class Bot : Role
     {
         //Bot features
-        private float laneMinion;
-        private int minionDiff;
-        private int dmgToChamps;
+        private double laneMinion;
+        private double minionDiff;
+        private long dmgToChamps;
 
-        public int DmgToChamps
+        public long DmgToChamps
         {
             get { return dmgToChamps; }
             set { dmgToChamps = value; }
         }
 
-        public int MinionDiff
+        public double MinionDiff
         {
             get { return minionDiff; }
             set { minionDiff = value; }
         }
 
-        public float LaneMinions
+        public double LaneMinions
         {
             get { return laneMinion; }
             set { laneMinion = value; }
         }
-
+        
     }
 }

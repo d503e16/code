@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Top
+    class Top : Role
     {
         //Top features
         private int wards;
