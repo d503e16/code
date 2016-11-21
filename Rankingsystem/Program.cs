@@ -16,7 +16,7 @@ namespace Rankingsystem
         {
             Database database = new Database();
             database.InitDatabase();
-
+            var summoner = database.GetSummoner(1);
             Console.WriteLine("test");
             Console.ReadKey();
         }

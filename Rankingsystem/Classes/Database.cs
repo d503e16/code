@@ -27,12 +27,11 @@ namespace Rankingsystem.Classes
         {
             string file =
                 Directory.GetParent(
-                    Directory.GetParent(
                         Directory.GetParent(
                             Directory.GetParent(
                             Environment.CurrentDirectory).ToString()
                         ).ToString()
-                    ).ToString()) + "\\LolRank.sqlite";
+                    ) + "\\LolRank.sqlite";
             if (!File.Exists(file))
                 Console.WriteLine("asd");
                 SQLiteConnection.CreateFile("LolRank" + ".sqlite");
@@ -41,37 +40,40 @@ namespace Rankingsystem.Classes
             m_dbConnection.Open();
 
             CreateTables();
+
+            m_dbConnection.Close();
         }
 
         // A method for creating tables in the databasefile
         private void CreateTables()
         {
-            Execute("CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)");
-            Execute("CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))");
+            string rankTableSql = "CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)";
+            string matchTableSql = "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
+
+            SQLiteCommand cmdRankTable = new SQLiteCommand(rankTableSql, m_dbConnection);
+            SQLiteCommand cmdMatchTable = new SQLiteCommand(matchTableSql, m_dbConnection);
+
+            cmdRankTable.ExecuteNonQuery();
+            cmdMatchTable.ExecuteNonQuery();
         }
 
-        // A method for executing SQL string in the database
-        public void Execute(string sql)
+        public Summoner GetSummoner(long id)
         {
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-        }
+            Summoner s = new Summoner();
+            string sql = "SELECT * FROM rankTable WHERE id = " + id;
 
-        // A method for retrieving information from the database file and seperating it acording to a string array
-        public void Read(string sql, ref List<string> resultData, params string[] elements)
-        {
-            resultData.Clear();
+            m_dbConnection.Open();
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            SQLiteDataReader reader = command.ExecuteReader();
+            var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                string s = "";
-                foreach (string el in elements)
-                {
-                    s += reader[el] + ",";
-                }
-                resultData.Add(s);
+                s.PlayerId = id;
+                s.RankingPoints = (long)reader[2];
+                s.UserName = (string)reader[1];
             }
+
+            if (s.PlayerId != 0) return s;
+            return null;
         }
     }
 }
