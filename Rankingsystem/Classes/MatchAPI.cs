@@ -75,7 +75,29 @@ namespace Rankingsystem.Classes
         //p.Roleprop = Ja;
         //    }
 
-    public Participant getparticipant(int i)
+    public Match Creatematch()
+        {
+            Match match = new Match();
+            Team A = new Team();
+            Team B = new Team();
+
+            for (int i = 0; i < 10; i++)
+            {
+                this.getparticipant(i);
+                if (this.getparticipant(i).TeamId == 100)
+                {
+                    A.Participants.Add(this.getparticipant(i));
+                }
+                else
+                    B.Participants.Add(this.getparticipant(i));
+            }
+            match.Team1 = A;
+            match.Team2 = B;
+
+            return match;
+        }
+
+    private Participant getparticipant(int i)
         {
             Participant p = new Participant();
             p.TeamId = this.Participants[i].TeamId;
@@ -86,22 +108,23 @@ namespace Rankingsystem.Classes
                     p.Roleprop = fillbotdata(p, i);
                     break;
                 case "NONE":
-                    p.Roleprop = new Jungle();
+                    p.Roleprop = filljungledata(p, i); 
                     break;
                 case "DUO_SUPPORT":
-                    p.Roleprop = new Support();
+                    p.Roleprop = fillsupportdata(p, i);
                     break;
                 case "SOLO":
-                    if (this.Participants[i].Timeline.Lane == "MIDDLE")
+                    if (this.Participants[i].Timeline.Lane == "MIDDLE" || this.Participants[i].Timeline.Lane == "MID")
                     {
-                        p.Roleprop = new Mid();
+                        p.Roleprop = fillmiddata(p, i);
                     }
                     else
-                        p.Roleprop = new Top();
+                        p.Roleprop = filltopdata(p, i);
                     break;
             }
             return p;
         }
+
         private Bot fillbotdata(Participant p, int i)
         {
             Bot b = new Bot();
@@ -133,6 +156,61 @@ namespace Rankingsystem.Classes
                 p.Roleprop.KDA = (stats.Kills + stats.Assists) / stats.Deaths;
             }
             p.Roleprop.KP = teamkills / (stats.Assists + stats.Kills);
+        }
+        private Support fillsupportdata(Participant p, int i)
+        {
+            Support s = new Support();
+            p.Roleprop = s;
+
+            var stats = this.Participants[i].Stats;
+
+            fillgeneraldata(p, i);
+            s.Assists = stats.Assists;
+
+            return s;
+        }
+        private Top filltopdata(Participant p, int i)
+        {
+            Top t = new Top();
+            p.Roleprop = t;
+
+            var stats = this.Participants[i].Stats;
+
+            fillgeneraldata(p, i);
+            t.LaneMinions = this.Participants[i].Timeline.CreepsPerMinDeltas.ZeroToTen + this.Participants[i].Timeline.CreepsPerMinDeltas.TenToTwenty;
+            t.DmgToChamps = stats.TotalDamageDealtToChampions;
+            t.Assists = stats.Assists;
+            t.Deaths = stats.Deaths;
+
+            return t;
+        }
+        private Mid fillmiddata(Participant p, int i)
+        {
+            Mid m = new Mid();
+            p.Roleprop = m;
+
+            var stats = this.Participants[i].Stats;
+            var enemy = this.Participants.Find(x => x.TeamId != p.TeamId && x.Timeline.Role == "SOLO" && x.Timeline.Lane == "MIDDLE" || x.Timeline.Lane == "MID");
+
+            fillgeneraldata(p, i);
+            m.MinionDiff = stats.MinionsKilled - enemy.Stats.MinionsKilled;
+            m.DmgToChamps = stats.TotalDamageDealtToChampions;
+            m.EnemyMonsters = stats.NeutralMinionsKilledEnemyJungle;
+
+            return m;
+        }
+        private Jungle filljungledata(Participant p, int i)
+        {
+            Jungle j = new Jungle();
+            p.Roleprop = j;
+
+            var stats = this.Participants[i].Stats;
+
+            fillgeneraldata(p, i);
+            j.EnemyMonsters = stats.NeutralMinionsKilledTeamJungle;
+            j.EnemyMonsters = stats.NeutralMinionsKilledEnemyJungle;
+
+            return j;
         }
     }  
 }

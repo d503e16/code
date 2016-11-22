@@ -11,24 +11,24 @@ namespace Rankingsystem.Classes.Roles
         //Mid features
         private int wards;
         private float laneMinions;
-        private int minionDiff;
-        private int dmgToChamps;
-        private int enemyMonsters;
+        private long minionDiff;
+        private long dmgToChamps;
+        private long enemyMonsters;
 
-        public int EnemyMonsters
+        public long EnemyMonsters
         {
             get { return enemyMonsters; }
             set { enemyMonsters = value; }
         }
 
 
-        public int DmgToChamps
+        public long DmgToChamps
         {
             get { return dmgToChamps; }
             set { dmgToChamps = value; }
         }
 
-        public int MinionDiff
+        public long MinionDiff
         {
             get { return minionDiff; }
             set { minionDiff = value; }
