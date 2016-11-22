@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Bot : Role
+    public class Bot : Role
     {
         //Bot features
         private double laneMinion;
-        private double minionDiff;
+        private long minionDiff;
         private long dmgToChamps;
-
+        
         public long DmgToChamps
         {
             get { return dmgToChamps; }
             set { dmgToChamps = value; }
         }
 
-        public double MinionDiff
+        public long MinionDiff
         {
             get { return minionDiff; }
             set { minionDiff = value; }

@@ -6,33 +6,33 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes
 {
-    abstract class Role
+    public abstract class Role
     {
         //Generelle features
-        private Boolean firstBlood;
-        private Boolean firstTurret;
-        private float _KDA;
-        private float _KP;
+        private bool firstBlood;
+        private bool firstTurret;
+        private double _KDA;
+        private double _KP;
 
-        public float KP
+        public double KP
         {
             get { return _KP; }
             set { _KP = value; }
         }
 
-        public float KDA
+        public double KDA
         {
             get { return _KDA; }
             set { _KDA = value; }
         }
 
-        public Boolean FirstTurret
+        public bool FirstTurret
         {
             get { return firstTurret; }
             set { firstTurret = value; }
         }
         
-        public Boolean FirstBlood
+        public bool FirstBlood
         {
             get { return firstBlood; }
             set { firstBlood = value; }

@@ -7,14 +7,21 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes
 {
-    class Team
+    public class Team
     {
-        private List<Participant> team;
+        private List<Participant> participants;
+        private bool winner;
 
-        public List<Participant> Teamprop
+        public bool Winner
+        {
+            get { return winner; }
+            set { winner = value; }
+        }
+
+        public List<Participant> Participants
         {   
-            get { return team; }
-            set { team = value; }
+            get { return participants; }
+            set { participants = value; }
         }
     }
 }

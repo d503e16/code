@@ -11,16 +11,7 @@ namespace Rankingsystem.Classes
 {
     public class Database
     {
-        //Lists of object contained in the Database instance used to retrieve data from the database file
-        public string[] playerTableColumns = new string[3] { "id", "username", "points" };
-        public string[] matchTableColumns = new string[2] { "matchid", "match" };
-        public SQLiteConnection m_dbConnection;
-        public List<string> readInfo = new List<string>();
-
-        public Database()
-        {
-            readInfo = new List<string>();
-        }
+        public SQLiteConnection dbConnection;
 
         // A method for opening the conection to the database file
         public void InitDatabase()
@@ -33,15 +24,14 @@ namespace Rankingsystem.Classes
                         ).ToString()
                     ) + "\\LolRank.sqlite";
             if (!File.Exists(file))
-                Console.WriteLine("asd");
                 SQLiteConnection.CreateFile("LolRank" + ".sqlite");
 
-            m_dbConnection = new SQLiteConnection("Data Source=" + file + ";Version=3;");
-            m_dbConnection.Open();
+            dbConnection = new SQLiteConnection("Data Source=" + file + ";Version=3;");
+            dbConnection.Open();
 
             CreateTables();
 
-            m_dbConnection.Close();
+            dbConnection.Close();
         }
 
         // A method for creating tables in the databasefile
@@ -50,8 +40,8 @@ namespace Rankingsystem.Classes
             string rankTableSql = "CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)";
             string matchTableSql = "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
 
-            SQLiteCommand cmdRankTable = new SQLiteCommand(rankTableSql, m_dbConnection);
-            SQLiteCommand cmdMatchTable = new SQLiteCommand(matchTableSql, m_dbConnection);
+            SQLiteCommand cmdRankTable = new SQLiteCommand(rankTableSql, dbConnection);
+            SQLiteCommand cmdMatchTable = new SQLiteCommand(matchTableSql, dbConnection);
 
             cmdRankTable.ExecuteNonQuery();
             cmdMatchTable.ExecuteNonQuery();
@@ -59,21 +49,30 @@ namespace Rankingsystem.Classes
 
         public Summoner GetSummoner(long id)
         {
-            Summoner s = new Summoner();
             string sql = "SELECT * FROM rankTable WHERE id = " + id;
 
-            m_dbConnection.Open();
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            var reader = command.ExecuteReader();
+            dbConnection.Open();
+            SQLiteCommand cmd = new SQLiteCommand(sql, dbConnection);
+            var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                s.PlayerId = id;
-                s.RankingPoints = (long)reader[2];
-                s.UserName = (string)reader[1];
+                // reader[0] = id of player, reader[1] = name of player, reader[2] = rankingpoints
+                var s = new Summoner(id, (string)reader[1], (long)reader[2]);
+                dbConnection.Close();
+                return s;      
             }
-
-            if (s.PlayerId != 0) return s;
+            dbConnection.Close();
             return null;
+        }
+
+        public void UpdateSummoner(Summoner s)
+        {
+            string sql = "INSERT OR REPLACE INTO rankTable (id, username, points) VALUES" +
+                "(" + s.PlayerId + ",\"" + s.UserName + "\"," + s.RankingPoints + ")";
+            dbConnection.Open();
+            SQLiteCommand cmd = new SQLiteCommand(sql, dbConnection);
+            cmd.ExecuteNonQuery();
+            dbConnection.Close();
         }
     }
 }

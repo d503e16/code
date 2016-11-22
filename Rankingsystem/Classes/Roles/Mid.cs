@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Mid : Role
+    public class Mid : Role
     {
         //Mid features
-        private int wards;
-        private float laneMinions;
+        private long wards;
+        private double laneMinions;
         private long minionDiff;
         private long dmgToChamps;
         private long enemyMonsters;
@@ -35,13 +35,13 @@ namespace Rankingsystem.Classes.Roles
         }
 
 
-        public float LaneMinions
+        public double LaneMinions
         {
             get { return laneMinions; }
             set { laneMinions = value; }
         }
 
-        public int Wards
+        public long Wards
         {
             get { return wards; }
             set { wards = value; }

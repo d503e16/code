@@ -62,6 +62,7 @@
     <Compile Include="Classes\Roles\Top.cs" />
     <Compile Include="Classes\Summoner.cs" />
     <Compile Include="Classes\Team.cs" />
+    <Compile Include="Classes\Update.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -6,17 +6,23 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes
 {
-    class Participant
+    public class Participant : Summoner
     {
+        public Participant(long id, string userName, long points, int teamId, Role role) :
+            base(id, userName, points)
+        {
+            this.teamId = teamId;
+            this.role = role;
+        }
+
         private int teamId;
         private Role role;
 
-        public Role Roleprop
+        public Role Role
         {
             get { return role; }
             set { role = value; }
         }
-
 
         public int TeamId
         {

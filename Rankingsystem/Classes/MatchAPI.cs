@@ -97,7 +97,7 @@ namespace Rankingsystem.Classes
             return match;
         }
 
-    private Participant getparticipant(int i)
+        private Participant getparticipant(int i)
         {
             Participant p = new Participant();
             p.TeamId = this.Participants[i].TeamId;
@@ -105,21 +105,19 @@ namespace Rankingsystem.Classes
             switch (this.Participants[i].Timeline.Role)
             {
                 case "DUO_CARRY":
-                    p.Roleprop = fillbotdata(p, i);
+                    p.Role = fillbotdata(p, i);
                     break;
                 case "NONE":
-                    p.Roleprop = filljungledata(p, i); 
+                    p.Role = filljungledata(p, i); 
                     break;
                 case "DUO_SUPPORT":
-                    p.Roleprop = fillsupportdata(p, i);
+                    p.Role = fillsupportdata(p, i);
                     break;
                 case "SOLO":
                     if (this.Participants[i].Timeline.Lane == "MIDDLE" || this.Participants[i].Timeline.Lane == "MID")
-                    {
-                        p.Roleprop = fillmiddata(p, i);
-                    }
+                        p.Role = fillmiddata(p, i);
                     else
-                        p.Roleprop = filltopdata(p, i);
+                        p.Role = filltopdata(p, i);
                     break;
             }
             return p;
@@ -128,7 +126,7 @@ namespace Rankingsystem.Classes
         private Bot fillbotdata(Participant p, int i)
         {
             Bot b = new Bot();
-            p.Roleprop = b;
+            p.Role = b;
 
             var stats = this.Participants[i].Stats;
             var enemy = this.Participants.Find(x => x.TeamId != p.TeamId && x.Timeline.Role == "DUO_CARRY");
@@ -145,22 +143,22 @@ namespace Rankingsystem.Classes
             var stats = this.Participants[i].Stats;
             var teamkills = this.Participants.FindAll(x => x.TeamId == p.TeamId).Sum(x => x.Stats.Kills + x.Stats.Assists);
 
-            p.Roleprop.FirstBlood = stats.FirstBloodKill || stats.FirstBloodAssist;
-            p.Roleprop.FirstTurret = stats.FirstTowerKill || stats.FirstTowerAssist;
+            p.Role.FirstBlood = stats.FirstBloodKill || stats.FirstBloodAssist;
+            p.Role.FirstTurret = stats.FirstTowerKill || stats.FirstTowerAssist;
             if (stats.Deaths == 0)
             {
-                p.Roleprop.KDA = stats.Kills + stats.Assists;
+                p.Role.KDA = stats.Kills + stats.Assists;
             }
             else
             {
-                p.Roleprop.KDA = (stats.Kills + stats.Assists) / stats.Deaths;
+                p.Role.KDA = (stats.Kills + stats.Assists) / stats.Deaths;
             }
-            p.Roleprop.KP = teamkills / (stats.Assists + stats.Kills);
+            p.Role.KP = teamkills / (stats.Assists + stats.Kills);
         }
         private Support fillsupportdata(Participant p, int i)
         {
             Support s = new Support();
-            p.Roleprop = s;
+            p.Role = s;
 
             var stats = this.Participants[i].Stats;
 
@@ -172,7 +170,7 @@ namespace Rankingsystem.Classes
         private Top filltopdata(Participant p, int i)
         {
             Top t = new Top();
-            p.Roleprop = t;
+            p.Role = t;
 
             var stats = this.Participants[i].Stats;
 
@@ -187,7 +185,7 @@ namespace Rankingsystem.Classes
         private Mid fillmiddata(Participant p, int i)
         {
             Mid m = new Mid();
-            p.Roleprop = m;
+            p.Role = m;
 
             var stats = this.Participants[i].Stats;
             var enemy = this.Participants.Find(x => x.TeamId != p.TeamId && x.Timeline.Role == "SOLO" && x.Timeline.Lane == "MIDDLE" || x.Timeline.Lane == "MID");
@@ -202,7 +200,7 @@ namespace Rankingsystem.Classes
         private Jungle filljungledata(Participant p, int i)
         {
             Jungle j = new Jungle();
-            p.Roleprop = j;
+            p.Role = j;
 
             var stats = this.Participants[i].Stats;
 

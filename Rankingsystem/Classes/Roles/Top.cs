@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Top : Role
+    public class Top : Role
     {
         //Top features
-        private int wards;
+        private long wards;
         private double laneMinions;
-        private int minionDiff;
+        private long minionDiff;
         private long dmgToChamps;
         private long assists;
         private long deaths;
@@ -34,12 +34,11 @@ namespace Rankingsystem.Classes.Roles
             set { dmgToChamps = value; }
         }
 
-        public int MinionDiff
+        public long MinionDiff
         {
             get { return minionDiff; }
             set { minionDiff = value; }
         }
-
 
         public double LaneMinions
         {
@@ -47,11 +46,10 @@ namespace Rankingsystem.Classes.Roles
             set { laneMinions = value; }
         }
 
-        public int Wards
+        public long Wards
         {
             get { return wards; }
             set { wards = value; }
         }
-
     }
 }

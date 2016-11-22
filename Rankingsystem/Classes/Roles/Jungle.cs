@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Jungle : Role
+    public class Jungle : Role
     {
         //Jungle features
         private long ownMonsters;
         private long enemyMonsters;
-        private int wards;
+        private long wards;
 
-        public int Wards
+        public long Wards
         {
             get { return wards; }
             set { wards = value; }

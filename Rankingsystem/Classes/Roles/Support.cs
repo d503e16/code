@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Support : Role
+    public class Support : Role
     {
         //Support
         private long assists;
