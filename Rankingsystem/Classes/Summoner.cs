@@ -18,5 +18,10 @@ namespace Rankingsystem.Classes
             UserName = userName;
             RankingPoints = points;
         }
+
+        public Summoner()
+        {
+
+        }
     }
 }

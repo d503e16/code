@@ -8,6 +8,14 @@ namespace Rankingsystem.Classes
 {
     public abstract class Role
     {
+        public Role(bool fb, bool ft, double kda, double kp)
+        {
+            this.firstBlood = fb;
+            this.firstTurret = ft;
+            this._KDA = kda;
+            this._KP = kp;
+        }
+        
         //Generelle features
         private bool firstBlood;
         private bool firstTurret;

@@ -8,14 +8,18 @@ namespace Rankingsystem.Classes
 {
     public class Participant : Summoner
     {
-        public Participant(long id, string userName, long points, int teamId, Role role) :
+        public Participant(long id, string userName, long points, Role role) :
             base(id, userName, points)
         {
-            this.teamId = teamId;
             this.role = role;
         }
 
-        private int teamId;
+        public Participant(long id, Role role)
+        {
+            base.PlayerId = id;
+            this.role = role;
+        }
+        
         private Role role;
 
         public Role Role
@@ -23,12 +27,5 @@ namespace Rankingsystem.Classes
             get { return role; }
             set { role = value; }
         }
-
-        public int TeamId
-        {
-            get { return teamId; }
-            set { teamId = value; }
-        }
-
     }
 }

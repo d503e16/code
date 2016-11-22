@@ -8,6 +8,15 @@ namespace Rankingsystem.Classes.Roles
 {
     public class Bot : Role
     {
+        public Bot(bool firstBlood, bool firstTurret, double KDA, double KP, 
+            double laneMinion, long minionDiff, long dmgToChamps) : 
+            base(firstBlood, firstTurret, KDA, KP)
+        {
+            this.laneMinion = laneMinion;
+            this.minionDiff = minionDiff;
+            this.dmgToChamps = dmgToChamps;
+        }
+
         //Bot features
         private double laneMinion;
         private long minionDiff;

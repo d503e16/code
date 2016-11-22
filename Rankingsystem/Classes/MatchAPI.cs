@@ -23,6 +23,7 @@ namespace Rankingsystem.Classes
             public class PlayerAPI
             {
                 public long SummonerId { get; set; }
+                public string SummonerName { get; set; }
             }
         }
 
@@ -31,6 +32,7 @@ namespace Rankingsystem.Classes
             public StatAPI Stats { get; set; }
             public int TeamId { get; set; }
             public ParticipantTimelineAPI Timeline { get; set; }
+            public int ParticipantId { get; set; }
 
             public class StatAPI
             {
@@ -66,18 +68,8 @@ namespace Rankingsystem.Classes
             }
         }
 
-        //Participant p = new Participant();
-        //p.TeamId = match.Participants[0].TeamId;
-        //    Jungle j = match.Participants.Find(p => p.Timeline.Role == "JUNGLE" && p.TeamId == 100);
-        //    if (match.Participants[0].Timeline.Role == "Jungle")
-        //    {
-        //        Jungle Ja = new Jungle();
-        //p.Roleprop = Ja;
-        //    }
-
-    public Match Creatematch()
+        public Match Creatematch()
         {
-            Match match = new Match();
             Team A = new Team();
             Team B = new Team();
 
@@ -97,64 +89,46 @@ namespace Rankingsystem.Classes
             return match;
         }
 
-        private Participant getparticipant(int i)
+        private List<Participant> getParticipants()
         {
-            Participant p = new Participant();
-            p.TeamId = this.Participants[i].TeamId;
-
-            switch (this.Participants[i].Timeline.Role)
+            List<Participant> result = new List<Participant>();
+            foreach (ParticipantAPI p in Participants)
             {
-                case "DUO_CARRY":
-                    p.Role = fillbotdata(p, i);
-                    break;
-                case "NONE":
-                    p.Role = filljungledata(p, i); 
-                    break;
-                case "DUO_SUPPORT":
-                    p.Role = fillsupportdata(p, i);
-                    break;
-                case "SOLO":
-                    if (this.Participants[i].Timeline.Lane == "MIDDLE" || this.Participants[i].Timeline.Lane == "MID")
-                        p.Role = fillmiddata(p, i);
-                    else
-                        p.Role = filltopdata(p, i);
-                    break;
+                switch (p.Timeline.Role)
+                {
+                    case "DUO_CARRY":
+                        var summoner = ParticipantIdentities.Find(pId => pId.ParticipantId == p.ParticipantId);
+                        result.Add(new Participant(summoner.Player.SummonerId, fillBotData(p)));
+                        break;
+
+                    default:
+                        break;
+                }
             }
-            return p;
         }
 
-        private Bot fillbotdata(Participant p, int i)
+        private Bot fillBotData(ParticipantAPI p)
         {
-            Bot b = new Bot();
-            p.Role = b;
+            
+            var enemyCs = Participants.Find(enemy => enemy.TeamId != p.TeamId &&
+                enemy.Timeline.Role == "DUO_CARRY").Stats.MinionsKilled;
 
-            var stats = this.Participants[i].Stats;
-            var enemy = this.Participants.Find(x => x.TeamId != p.TeamId && x.Timeline.Role == "DUO_CARRY");
+            var teamKills = Participants.FindAll(player => player.TeamId == p.TeamId).
+                Sum(player => player.Stats.Kills);
+            var kda = p.Stats.Deaths != 0 ? ((double)p.Stats.Kills + p.Stats.Assists) / p.Stats.Deaths : 
+                p.Stats.Kills + p.Stats.Assists;
+            var killParticipation = teamKills != 0 ? ((double)p.Stats.Kills + p.Stats.Assists) / teamKills :
+                0;
 
-            fillgeneraldata(p, i);
-            b.DmgToChamps = stats.TotalDamageDealtToChampions;
-            b.LaneMinions = this.Participants[i].Timeline.CreepsPerMinDeltas.ZeroToTen + this.Participants[i].Timeline.CreepsPerMinDeltas.TenToTwenty;
-            b.MinionDiff = stats.MinionsKilled - enemy.Stats.MinionsKilled;
-
-            return b;
+            return new Bot(p.Stats.FirstBloodAssist || p.Stats.FirstBloodKill,
+                p.Stats.FirstTowerAssist || p.Stats.FirstTowerKill,
+                kda,
+                killParticipation,
+                (p.Timeline.CreepsPerMinDeltas.ZeroToTen + p.Timeline.CreepsPerMinDeltas.TenToTwenty) / 2,
+                p.Stats.MinionsKilled - enemyCs, 
+                p.Stats.TotalDamageDealtToChampions);
         }
-        private void fillgeneraldata(Participant p, int i)
-        {
-            var stats = this.Participants[i].Stats;
-            var teamkills = this.Participants.FindAll(x => x.TeamId == p.TeamId).Sum(x => x.Stats.Kills + x.Stats.Assists);
-
-            p.Role.FirstBlood = stats.FirstBloodKill || stats.FirstBloodAssist;
-            p.Role.FirstTurret = stats.FirstTowerKill || stats.FirstTowerAssist;
-            if (stats.Deaths == 0)
-            {
-                p.Role.KDA = stats.Kills + stats.Assists;
-            }
-            else
-            {
-                p.Role.KDA = (stats.Kills + stats.Assists) / stats.Deaths;
-            }
-            p.Role.KP = teamkills / (stats.Assists + stats.Kills);
-        }
+       
         private Support fillsupportdata(Participant p, int i)
         {
             Support s = new Support();
@@ -162,7 +136,7 @@ namespace Rankingsystem.Classes
 
             var stats = this.Participants[i].Stats;
 
-            fillgeneraldata(p, i);
+            fillGeneralData(p, i);
             s.Assists = stats.Assists;
 
             return s;
@@ -174,7 +148,7 @@ namespace Rankingsystem.Classes
 
             var stats = this.Participants[i].Stats;
 
-            fillgeneraldata(p, i);
+            fillGeneralData(p, i);
             t.LaneMinions = this.Participants[i].Timeline.CreepsPerMinDeltas.ZeroToTen + this.Participants[i].Timeline.CreepsPerMinDeltas.TenToTwenty;
             t.DmgToChamps = stats.TotalDamageDealtToChampions;
             t.Assists = stats.Assists;
@@ -190,7 +164,7 @@ namespace Rankingsystem.Classes
             var stats = this.Participants[i].Stats;
             var enemy = this.Participants.Find(x => x.TeamId != p.TeamId && x.Timeline.Role == "SOLO" && x.Timeline.Lane == "MIDDLE" || x.Timeline.Lane == "MID");
 
-            fillgeneraldata(p, i);
+            fillGeneralData(p, i);
             m.MinionDiff = stats.MinionsKilled - enemy.Stats.MinionsKilled;
             m.DmgToChamps = stats.TotalDamageDealtToChampions;
             m.EnemyMonsters = stats.NeutralMinionsKilledEnemyJungle;
@@ -204,7 +178,7 @@ namespace Rankingsystem.Classes
 
             var stats = this.Participants[i].Stats;
 
-            fillgeneraldata(p, i);
+            fillGeneralData(p, i);
             j.EnemyMonsters = stats.NeutralMinionsKilledTeamJungle;
             j.EnemyMonsters = stats.NeutralMinionsKilledEnemyJungle;
 

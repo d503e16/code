@@ -9,12 +9,10 @@ namespace Rankingsystem.Classes
 {
     public class Match
     {
-        private Database db;
-        
-        public Match(Database db)
+        public Match(Team t1, Team t2)
         {
-            this.db = db;
-            team1 = new Team();
+            this.team1 = t1;
+            this.team2 = t2;
         }
         private Team team1;
         private Team team2;
@@ -31,7 +29,7 @@ namespace Rankingsystem.Classes
             set { team1 = value; }
         }
 
-        public void UpdateRanks()
+        public void UpdateRanks(Database db)
         {
             foreach (Participant p in team1.Participants)
             {
