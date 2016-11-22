@@ -9,8 +9,8 @@ namespace Rankingsystem.Classes.Roles
     class Jungle : Role
     {
         //Jungle features
-        private int ownMonsters;
-        private int enemyMonsters;
+        private long ownMonsters;
+        private long enemyMonsters;
         private int wards;
 
         public int Wards
@@ -19,13 +19,13 @@ namespace Rankingsystem.Classes.Roles
             set { wards = value; }
         }
 
-        public int EnemyMonsters
+        public long EnemyMonsters
         {
             get { return enemyMonsters; }
             set { enemyMonsters = value; }
         }
 
-        public int OwnMonsters
+        public long OwnMonsters
         {
             get { return ownMonsters; }
             set { ownMonsters = value; }

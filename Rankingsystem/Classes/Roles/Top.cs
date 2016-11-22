@@ -10,25 +10,25 @@ namespace Rankingsystem.Classes.Roles
     {
         //Top features
         private int wards;
-        private float laneMinions;
+        private double laneMinions;
         private int minionDiff;
-        private int dmgToChamps;
-        private int assists;
-        private int deaths;
+        private long dmgToChamps;
+        private long assists;
+        private long deaths;
 
-        public int Deaths
+        public long Deaths
         {
             get { return deaths; }
             set { deaths = value; }
         }
 
-        public int Assists
+        public long Assists
         {
             get { return assists; }
             set { assists = value; }
         }
 
-        public int DmgToChamps
+        public long DmgToChamps
         {
             get { return dmgToChamps; }
             set { dmgToChamps = value; }
@@ -41,7 +41,7 @@ namespace Rankingsystem.Classes.Roles
         }
 
 
-        public float LaneMinions
+        public double LaneMinions
         {
             get { return laneMinions; }
             set { laneMinions = value; }
