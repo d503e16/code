@@ -11,5 +11,12 @@ namespace Rankingsystem.Classes
         public long PlayerId { get; set; }
         public string UserName { get; set; }
         public long RankingPoints { get; set; }
+
+        public Summoner(long id, string userName, long points)
+        {
+            PlayerId = id;
+            UserName = userName;
+            RankingPoints = points;
+        }
     }
 }

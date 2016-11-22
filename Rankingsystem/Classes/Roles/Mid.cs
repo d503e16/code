@@ -6,42 +6,42 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Mid : Role
+    public class Mid : Role
     {
         //Mid features
-        private int wards;
-        private float laneMinions;
-        private int minionDiff;
-        private int dmgToChamps;
-        private int enemyMonsters;
+        private long wards;
+        private double laneMinions;
+        private long minionDiff;
+        private long dmgToChamps;
+        private long enemyMonsters;
 
-        public int EnemyMonsters
+        public long EnemyMonsters
         {
             get { return enemyMonsters; }
             set { enemyMonsters = value; }
         }
 
 
-        public int DmgToChamps
+        public long DmgToChamps
         {
             get { return dmgToChamps; }
             set { dmgToChamps = value; }
         }
 
-        public int MinionDiff
+        public long MinionDiff
         {
             get { return minionDiff; }
             set { minionDiff = value; }
         }
 
 
-        public float LaneMinions
+        public double LaneMinions
         {
             get { return laneMinions; }
             set { laneMinions = value; }
         }
 
-        public int Wards
+        public long Wards
         {
             get { return wards; }
             set { wards = value; }

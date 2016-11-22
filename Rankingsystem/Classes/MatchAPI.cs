@@ -83,21 +83,21 @@ namespace Rankingsystem.Classes
             switch (this.Participants[i].Timeline.Role)
             {
                 case "DUO_CARRY":
-                    p.Roleprop = fillbotdata(p, i);
+                    p.Role = fillbotdata(p, i);
                     break;
                 case "NONE":
-                    p.Roleprop = new Jungle();
+                    p.Role = new Jungle();
                     break;
                 case "DUO_SUPPORT":
-                    p.Roleprop = new Support();
+                    p.Role = new Support();
                     break;
                 case "SOLO":
                     if (this.Participants[i].Timeline.Lane == "MIDDLE")
                     {
-                        p.Roleprop = new Mid();
+                        p.Role = new Mid();
                     }
                     else
-                        p.Roleprop = new Top();
+                        p.Role = new Top();
                     break;
             }
             return p;
@@ -105,7 +105,7 @@ namespace Rankingsystem.Classes
         private Bot fillbotdata(Participant p, int i)
         {
             Bot b = new Bot();
-            p.Roleprop = b;
+            p.Role = b;
 
             var stats = this.Participants[i].Stats;
             var enemy = this.Participants.Find(x => x.TeamId != p.TeamId && x.Timeline.Role == "DUO_CARRY");
@@ -122,17 +122,17 @@ namespace Rankingsystem.Classes
             var stats = this.Participants[i].Stats;
             var teamkills = this.Participants.FindAll(x => x.TeamId == p.TeamId).Sum(x => x.Stats.Kills + x.Stats.Assists);
 
-            p.Roleprop.FirstBlood = stats.FirstBloodKill || stats.FirstBloodAssist;
-            p.Roleprop.FirstTurret = stats.FirstTowerKill || stats.FirstTowerAssist;
+            p.Role.FirstBlood = stats.FirstBloodKill || stats.FirstBloodAssist;
+            p.Role.FirstTurret = stats.FirstTowerKill || stats.FirstTowerAssist;
             if (stats.Deaths == 0)
             {
-                p.Roleprop.KDA = stats.Kills + stats.Assists;
+                p.Role.KDA = stats.Kills + stats.Assists;
             }
             else
             {
-                p.Roleprop.KDA = (stats.Kills + stats.Assists) / stats.Deaths;
+                p.Role.KDA = (stats.Kills + stats.Assists) / stats.Deaths;
             }
-            p.Roleprop.KP = teamkills / (stats.Assists + stats.Kills);
+            p.Role.KP = teamkills / (stats.Assists + stats.Kills);
         }
     }  
 }

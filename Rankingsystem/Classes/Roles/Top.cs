@@ -6,52 +6,50 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Top : Role
+    public class Top : Role
     {
         //Top features
-        private int wards;
-        private float laneMinions;
-        private int minionDiff;
-        private int dmgToChamps;
-        private int assists;
-        private int deaths;
+        private long wards;
+        private double laneMinions;
+        private long minionDiff;
+        private long dmgToChamps;
+        private long assists;
+        private long deaths;
 
-        public int Deaths
+        public long Deaths
         {
             get { return deaths; }
             set { deaths = value; }
         }
 
-        public int Assists
+        public long Assists
         {
             get { return assists; }
             set { assists = value; }
         }
 
-        public int DmgToChamps
+        public long DmgToChamps
         {
             get { return dmgToChamps; }
             set { dmgToChamps = value; }
         }
 
-        public int MinionDiff
+        public long MinionDiff
         {
             get { return minionDiff; }
             set { minionDiff = value; }
         }
 
-
-        public float LaneMinions
+        public double LaneMinions
         {
             get { return laneMinions; }
             set { laneMinions = value; }
         }
 
-        public int Wards
+        public long Wards
         {
             get { return wards; }
             set { wards = value; }
         }
-
     }
 }

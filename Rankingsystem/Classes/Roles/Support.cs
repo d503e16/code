@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes.Roles
 {
-    class Support : Role
+    public class Support : Role
     {
         //Support
-        private int assists;
+        private long assists;
 
-        public int Assists
+        public long Assists
         {
             get { return assists; }
             set { assists = value; }
