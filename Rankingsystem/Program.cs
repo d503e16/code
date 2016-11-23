@@ -7,6 +7,7 @@ using Rankingsystem.Classes;
 using Newtonsoft.Json;
 using System.Net.Http;
 using Rankingsystem.Classes.Roles;
+using System.Data.SQLite;
 
 namespace Rankingsystem
 {
@@ -15,10 +16,22 @@ namespace Rankingsystem
     {
         static void Main(string[] args)
         {
-            Database database = new Database();
-            database.InitDatabase();
+            Database db = new Database();
+            db.InitDatabase();
 
-            Console.WriteLine("hej");
+            string json = "";
+            string sql = "SELECT * FROM matchTable WHERE matchId = 2776285553";
+            db.dbConnection.Open();
+            SQLiteCommand cmd = new SQLiteCommand(sql, db.dbConnection);
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                json = (string)reader["match"];
+            }
+            
+            db.dbConnection.Close();
+            MatchAPI m = JsonConvert.DeserializeObject<MatchAPI>(json);
+            Console.WriteLine("");
             Console.ReadKey();
         }
     }

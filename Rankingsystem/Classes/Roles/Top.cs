@@ -8,6 +8,17 @@ namespace Rankingsystem.Classes.Roles
 {
     public class Top : Role
     {
+        public Top(bool fb, bool ft, double kda, double kp, long wards, double laneMinions,
+            long minionDiff, long dmgToChamps, long assists, long deaths) :
+            base(fb, ft, kda, kp)
+        {
+            this.wards = wards;
+            this.laneMinions = laneMinions;
+            this.minionDiff = minionDiff;
+            this.dmgToChamps = dmgToChamps;
+            this.assists = assists;
+            this.deaths = deaths;
+        }
         //Top features
         private long wards;
         private double laneMinions;

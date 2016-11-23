@@ -8,6 +8,16 @@ namespace Rankingsystem.Classes.Roles
 {
     public class Mid : Role
     {
+        public Mid(bool fb, bool ft, double kda, double kp, long wards, double laneMinions,
+            long minionDiff, long dmgToChamps, long enemyMonsters) : 
+            base(fb, ft, kda, kp)
+        {
+            this.wards = wards;
+            this.laneMinions = laneMinions;
+            this.minionDiff = minionDiff;
+            this.dmgToChamps = dmgToChamps;
+            this.enemyMonsters = enemyMonsters;
+        }
         //Mid features
         private long wards;
         private double laneMinions;

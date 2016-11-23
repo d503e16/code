@@ -8,6 +8,14 @@ namespace Rankingsystem.Classes.Roles
 {
     public class Jungle : Role
     {
+        public Jungle(bool fb, bool ft, double kda, double kp, long ownMonsters, 
+            long enemyMonsters, long wards) :
+            base(fb, ft, kda, kp)
+        {
+            this.ownMonsters = ownMonsters;
+            this.enemyMonsters = enemyMonsters;
+            this.wards = wards;
+        }
         //Jungle features
         private long ownMonsters;
         private long enemyMonsters;
