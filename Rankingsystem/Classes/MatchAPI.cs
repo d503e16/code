@@ -47,6 +47,17 @@ namespace Rankingsystem.Classes
                       (double)Stats.Kills + Stats.Assists;
                 }
             }
+            public long Wards { get
+                {
+                    return Stats.WardsKilled + Stats.WardsPlaced;
+                }
+            }
+            public double LaneMinions { get
+                {
+                    return Math.Round((Timeline.CreepsPerMinDeltas.ZeroToTen +
+                        Timeline.CreepsPerMinDeltas.TenToTwenty) / 2, 2);
+                }
+            }
             public int TeamId { get; set; }
             public ParticipantTimelineAPI Timeline { get; set; }
             public int ParticipantId { get; set; }
@@ -126,7 +137,7 @@ namespace Rankingsystem.Classes
         }
 
         private double getKillParticipation(ParticipantAPI p)
-        { 
+        {
             var teamKills = Participants.FindAll(player => player.TeamId == p.TeamId).
                 Sum(player => player.Stats.Kills);
             var killParticipation = teamKills != 0 ?
@@ -134,8 +145,7 @@ namespace Rankingsystem.Classes
                 0;
             return killParticipation;
         } 
-
-        // Lav props frem for udregninger!
+        
         private Bot createBotData(ParticipantAPI p)
         {  
             var enemyCs = Participants.Find(enemy => enemy.TeamId != p.TeamId &&
@@ -145,7 +155,7 @@ namespace Rankingsystem.Classes
                 p.FirstTurret,
                 p.KDA,
                 getKillParticipation(p),
-                (p.Timeline.CreepsPerMinDeltas.ZeroToTen + p.Timeline.CreepsPerMinDeltas.TenToTwenty) / 2,
+                p.LaneMinions,
                 p.Stats.MinionsKilled - enemyCs, 
                 p.Stats.TotalDamageDealtToChampions);
         }
@@ -169,8 +179,8 @@ namespace Rankingsystem.Classes
                 p.FirstTurret,
                 p.KDA,
                 getKillParticipation(p),
-                p.Stats.WardsKilled + p.Stats.WardsPlaced,
-                (p.Timeline.CreepsPerMinDeltas.ZeroToTen + p.Timeline.CreepsPerMinDeltas.TenToTwenty) / 2,
+                p.Wards,
+                p.LaneMinions,
                 p.Stats.MinionsKilled - enemyCs,
                 p.Stats.TotalDamageDealtToChampions,
                 p.Stats.Assists,
@@ -186,8 +196,8 @@ namespace Rankingsystem.Classes
                 p.FirstTurret,
                 p.KDA,
                 getKillParticipation(p),
-                p.Stats.WardsKilled + p.Stats.WardsPlaced,
-                (p.Timeline.CreepsPerMinDeltas.ZeroToTen + p.Timeline.CreepsPerMinDeltas.TenToTwenty) / 2,
+                p.Wards,
+                p.LaneMinions,
                 p.Stats.MinionsKilled - enemyCs,
                 p.Stats.TotalDamageDealtToChampions,
                 p.Stats.NeutralMinionsKilledEnemyJungle);
@@ -201,7 +211,7 @@ namespace Rankingsystem.Classes
                 getKillParticipation(p),
                 p.Stats.NeutralMinionsKilledTeamJungle,
                 p.Stats.NeutralMinionsKilledEnemyJungle,
-                p.Stats.WardsKilled + p.Stats.WardsPlaced);
+                p.Wards);
         }
     }  
 }
