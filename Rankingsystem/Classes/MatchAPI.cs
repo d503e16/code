@@ -10,6 +10,14 @@ namespace Rankingsystem.Classes
 {
     public class MatchAPI
     {
+        private Database db;
+
+        public MatchAPI()
+        {
+            db = new Database();
+            db.InitDatabase();
+        }
+
         public long MatchId { get; set; }
         public List<ParticipantAPI> Participants { get; set; }
         public List<ParticipantIdentityAPI> ParticipantIdentities { get; set; }
@@ -115,22 +123,36 @@ namespace Rankingsystem.Classes
 
         private Participant createParticipant(ParticipantAPI p)
         {
-            var summonerId = ParticipantIdentities.Find(
-                pId => pId.ParticipantId == p.ParticipantId).Player.SummonerId;
+            var summoner = ParticipantIdentities.Find(
+                pId => pId.ParticipantId == p.ParticipantId).Player;
+
+            Role role = createData(p);
+            if (role != null)
+            {
+                var result = new Participant(
+                    summoner.SummonerId, summoner.SummonerName, role);
+                result.RankingPoints = db.GetSummonerRank(summoner.SummonerId);
+                return result;
+            }
+            return null;
+        }
+
+        private Role createData(ParticipantAPI p)
+        {
             switch (p.Timeline.Role)
             {
                 case "DUO_CARRY":
-                    return new Participant(summonerId, createBotData(p));
+                    return createBotData(p);
                 case "DUO_SUPPORT":
-                    return new Participant(summonerId, createSupportData(p));
+                    return createSupportData(p);
                 case "NONE":
-                    return new Participant(summonerId, createJungleData(p));
+                    return createJungleData(p);
                 case "SOLO":
                     if (p.Timeline.Lane == "MIDDLE" || p.Timeline.Lane == "MID")
-                        return new Participant(summonerId, createMidData(p));
+                        return createMidData(p);
                     else if (p.Timeline.Lane == "TOP")
-                        return new Participant(summonerId, createTopData(p));
-                    else return null;
+                        return createTopData(p);
+                    return null;
                 default:
                     return null;
             }

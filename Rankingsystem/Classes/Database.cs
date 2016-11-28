@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.IO;
 using System.Data.Common;
+using Newtonsoft.Json;
 
 namespace Rankingsystem.Classes
 {
@@ -47,7 +48,7 @@ namespace Rankingsystem.Classes
             cmdMatchTable.ExecuteNonQuery();
         }
 
-        public Summoner GetSummoner(long id)
+        public long GetSummonerRank(long id)
         {
             string sql = "SELECT * FROM rankTable WHERE id = " + id;
 
@@ -56,13 +57,13 @@ namespace Rankingsystem.Classes
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                // reader[0] = id of player, reader[1] = name of player, reader[2] = rankingpoints
-                var s = new Summoner(id, (string)reader[1], (long)reader[2]);
+                // reader[2] = rankingpoints
+                var points = (long)reader[2];
                 dbConnection.Close();
-                return s;      
+                return points;      
             }
             dbConnection.Close();
-            return null;
+            return 0;
         }
 
         public void UpdateSummoner(Summoner s)
@@ -73,6 +74,24 @@ namespace Rankingsystem.Classes
             SQLiteCommand cmd = new SQLiteCommand(sql, dbConnection);
             cmd.ExecuteNonQuery();
             dbConnection.Close();
+        }
+
+        public Match GetMatch(long matchId)
+        {
+            string sql = "SELECT * FROM matchTable WHERE matchId = " + matchId;
+
+            dbConnection.Open();
+            SQLiteCommand cmd = new SQLiteCommand(sql, dbConnection);
+            var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                // reader[1] = match data
+                var m = JsonConvert.DeserializeObject<MatchAPI>((string)reader[1]);
+                dbConnection.Close();
+                return m.CreateMatch();
+            }
+            dbConnection.Close();
+            return null;
         }
     }
 }
