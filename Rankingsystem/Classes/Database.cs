@@ -1,23 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
 using System.Data.SQLite;
 using System.IO;
-using System.Data.Common;
 using Newtonsoft.Json;
 
 namespace Rankingsystem.Classes
 {
     public class Database
     {
-        public SQLiteConnection dbConnection;
+        public SQLiteConnection DbConnection { get; set; }
 
         // A method for opening the conection to the database file
-        public void InitDatabase()
+        public Database()
         {
-            string file =
+            var file =
                 Directory.GetParent(
                         Directory.GetParent(
                             Directory.GetParent(
@@ -27,22 +23,24 @@ namespace Rankingsystem.Classes
             if (!File.Exists(file))
                 SQLiteConnection.CreateFile("LolRank" + ".sqlite");
 
-            dbConnection = new SQLiteConnection("Data Source=" + file + ";Version=3;");
-            dbConnection.Open();
+            DbConnection = new SQLiteConnection("Data Source=" + file + ";Version=3;");
+            DbConnection.Open();
 
-            CreateTables();
+            createTables();
 
-            dbConnection.Close();
+            DbConnection.Close();
         }
 
         // A method for creating tables in the databasefile
-        private void CreateTables()
+        private void createTables()
         {
-            string rankTableSql = "CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)";
-            string matchTableSql = "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
+            var rankTableSql =
+                "CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)";
+            var matchTableSql =
+                "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
 
-            SQLiteCommand cmdRankTable = new SQLiteCommand(rankTableSql, dbConnection);
-            SQLiteCommand cmdMatchTable = new SQLiteCommand(matchTableSql, dbConnection);
+            var cmdRankTable = new SQLiteCommand(rankTableSql, DbConnection);
+            var cmdMatchTable = new SQLiteCommand(matchTableSql, DbConnection);
 
             cmdRankTable.ExecuteNonQuery();
             cmdMatchTable.ExecuteNonQuery();
@@ -52,45 +50,45 @@ namespace Rankingsystem.Classes
         {
             string sql = "SELECT * FROM rankTable WHERE id = " + id;
 
-            dbConnection.Open();
-            SQLiteCommand cmd = new SQLiteCommand(sql, dbConnection);
+            DbConnection.Open();
+            var cmd = new SQLiteCommand(sql, DbConnection);
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 // reader[2] = rankingpoints
                 var points = (long)reader[2];
-                dbConnection.Close();
+                DbConnection.Close();
                 return points;      
             }
-            dbConnection.Close();
-            return 0;
+            DbConnection.Close();
+            throw new RowNotInTableException();
         }
 
         public void UpdateSummoner(Summoner s)
         {
             string sql = "INSERT OR REPLACE INTO rankTable (id, username, points) VALUES" +
                 "(" + s.PlayerId + ",\"" + s.UserName + "\"," + s.RankingPoints + ")";
-            dbConnection.Open();
-            SQLiteCommand cmd = new SQLiteCommand(sql, dbConnection);
+            DbConnection.Open();
+            var cmd = new SQLiteCommand(sql, DbConnection);
             cmd.ExecuteNonQuery();
-            dbConnection.Close();
+            DbConnection.Close();
         }
 
         public Match GetMatch(long matchId)
         {
             string sql = "SELECT * FROM matchTable WHERE matchId = " + matchId;
 
-            dbConnection.Open();
-            SQLiteCommand cmd = new SQLiteCommand(sql, dbConnection);
+            DbConnection.Open();
+            var cmd = new SQLiteCommand(sql, DbConnection);
             var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
                 // reader[1] = match data
                 var m = JsonConvert.DeserializeObject<MatchAPI>((string)reader[1]);
-                dbConnection.Close();
+                DbConnection.Close();
                 return m.CreateMatch();
             }
-            dbConnection.Close();
+            DbConnection.Close();
             return null;
         }
     }

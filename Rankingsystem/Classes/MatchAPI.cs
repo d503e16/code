@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rankingsystem.Classes.Roles;
 
 namespace Rankingsystem.Classes
@@ -15,7 +12,6 @@ namespace Rankingsystem.Classes
         public MatchAPI()
         {
             db = new Database();
-            db.InitDatabase();
         }
 
         public long MatchId { get; set; }

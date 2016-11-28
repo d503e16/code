@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rankingsystem.Classes.Roles;
 
 namespace Rankingsystem.Classes
