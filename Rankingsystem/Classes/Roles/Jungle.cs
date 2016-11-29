@@ -2,7 +2,7 @@ namespace Rankingsystem.Classes.Roles
 {
     public class Jungle : Role
     {
-        public Jungle(bool fb, bool ft, double kda, double kp, long ownMonsters, 
+        public Jungle(bool fb, bool ft, double kda, long kp, long ownMonsters, 
             long enemyMonsters, long wards) :
             base(fb, ft, kda, kp)
         {
@@ -33,5 +33,17 @@ namespace Rankingsystem.Classes.Roles
             set { ownMonsters = value; }
         }
 
+        public override long IndividualPerformance()
+        {
+            return base.IndividualPerformance() + enemyMonsters + ownMonsters + wards;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() +
+                "Enemy Monsters: " + enemyMonsters + "\n" +
+                "Own Monsters: " + ownMonsters + "\n" +
+                "Wards: " + wards;
+        }
     }
 }

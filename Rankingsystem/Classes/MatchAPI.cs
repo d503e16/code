@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rankingsystem.Classes.Roles;
+using System.Data;
 
 namespace Rankingsystem.Classes
 {
@@ -127,7 +128,14 @@ namespace Rankingsystem.Classes
             {
                 var result = new Participant(
                     summoner.SummonerId, summoner.SummonerName, role);
-                result.RankingPoints = db.GetSummonerRank(summoner.SummonerId);
+                try
+                {
+                    result.RankingPoints = db.GetSummonerRank(summoner.SummonerId);
+                }
+                catch (RowNotInTableException)
+                {
+                    result.RankingPoints = 0;
+                }
                 return result;
             }
             return null;
@@ -154,14 +162,14 @@ namespace Rankingsystem.Classes
             }
         }
 
-        private double getKillParticipation(ParticipantAPI p)
+        private long getKillParticipation(ParticipantAPI p)
         {
             var teamKills = Participants.FindAll(player => player.TeamId == p.TeamId).
                 Sum(player => player.Stats.Kills);
             var killParticipation = teamKills != 0 ?
                 ((double)p.Stats.Kills + p.Stats.Assists) / teamKills :
                 0;
-            return killParticipation;
+            return Convert.ToInt64(killParticipation * 100);
         } 
         
         private Bot createBotData(ParticipantAPI p)

@@ -2,7 +2,7 @@ namespace Rankingsystem.Classes.Roles
 {
     public class Top : Role
     {
-        public Top(bool fb, bool ft, double kda, double kp, long wards, double laneMinions,
+        public Top(bool fb, bool ft, double kda, long kp, long wards, double laneMinions,
             long minionDiff, long dmgToChamps, long assists, long deaths) :
             base(fb, ft, kda, kp)
         {
@@ -55,6 +55,23 @@ namespace Rankingsystem.Classes.Roles
         {
             get { return wards; }
             set { wards = value; }
+        }
+
+        public override long IndividualPerformance()
+        {
+            return base.IndividualPerformance() + (long)laneMinions + 
+                wards + deaths + assists + dmgToChamps + minionDiff;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() +
+                "Lane Minions: " + laneMinions + "\n" +
+                "Minion Difference: " + minionDiff + "\n" +
+                "Damage to Champions: " + dmgToChamps + "\n" +
+                "Wards: " + wards + "\n" +
+                "Deaths: " + deaths + "\n" +
+                "Assist: " + assists + "\n";
         }
     }
 }

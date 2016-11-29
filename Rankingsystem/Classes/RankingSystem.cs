@@ -101,6 +101,10 @@ namespace Rankingsystem.Classes
             {
                 var match = db.GetMatch(Convert.ToInt64(matchId));
                 match.UpdateRanks(db);
+                foreach (Participant p in match.Team1.Participants)
+                {
+                    Console.WriteLine(p.Role.ToString());
+                }
                 return "Ranks are now updated!";
             }
             catch (Exception e)
@@ -113,13 +117,19 @@ namespace Rankingsystem.Classes
             }
         }
 
+        private string printCalculationsOfRank(Match match)
+        {
+
+            return "";
+        }
+
         private void waitUntilKeyIsPressed()
         {
-            int timeBetweenDots = 100;
+            int timeBetweenDots = 250;
             while (Console.KeyAvailable == false)
             {
                 Console.Write("Press any key to continue");
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i <= 3; i++)
                 {
                     Thread.Sleep(timeBetweenDots);
                     Console.Write(".");

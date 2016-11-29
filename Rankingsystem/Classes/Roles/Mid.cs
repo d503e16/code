@@ -2,7 +2,7 @@ namespace Rankingsystem.Classes.Roles
 {
     public class Mid : Role
     {
-        public Mid(bool fb, bool ft, double kda, double kp, long wards, double laneMinions,
+        public Mid(bool fb, bool ft, double kda, long kp, long wards, double laneMinions,
             long minionDiff, long dmgToChamps, long enemyMonsters) : 
             base(fb, ft, kda, kp)
         {
@@ -49,6 +49,22 @@ namespace Rankingsystem.Classes.Roles
         {
             get { return wards; }
             set { wards = value; }
+        }
+
+        public override long IndividualPerformance()
+        {
+            return base.IndividualPerformance() + wards + (long)laneMinions +
+                minionDiff + dmgToChamps + enemyMonsters;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() +
+                "Lane Minions: " + laneMinions + "\n" +
+                "Minion Difference: " + minionDiff + "\n" +
+                "Damage to Champions: " + dmgToChamps + "\n" +
+                "Wards: " + wards + "\n" +
+                "Enemy Monsters: " + enemyMonsters;
         }
     }
 }

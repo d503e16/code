@@ -1,8 +1,10 @@
+using System;
+
 namespace Rankingsystem.Classes.Roles
 {
     public class Bot : Role
     {
-        public Bot(bool firstBlood, bool firstTurret, double KDA, double KP, 
+        public Bot(bool firstBlood, bool firstTurret, double KDA, long KP, 
             double laneMinion, long minionDiff, long dmgToChamps) : 
             base(firstBlood, firstTurret, KDA, KP)
         {
@@ -33,6 +35,18 @@ namespace Rankingsystem.Classes.Roles
             get { return laneMinion; }
             set { laneMinion = value; }
         }
-        
+
+        public override long IndividualPerformance()
+        {
+            return base.IndividualPerformance() + dmgToChamps + minionDiff + (long)laneMinion;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() +
+                "Minion Difference: " + minionDiff + "\n" +
+                "Lane Minions: " + laneMinion + "\n" +
+                "Damage to Champions: " + dmgToChamps;
+        }
     }
 }
