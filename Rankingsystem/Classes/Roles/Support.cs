@@ -18,7 +18,7 @@ namespace Rankingsystem.Classes.Roles
             set { assists = value; }
         }
         
-        public override double[] getData()
+        public override double[] GetData()
         {
             List<double> list = new List<double>();
             list.Add((double)assists);
@@ -29,15 +29,27 @@ namespace Rankingsystem.Classes.Roles
             return list.ToArray();
         }
 
+        public int AssistScore
+        {
+            get
+            {
+                if (assists == 0) return 1;
+                else if (assists > 0 && assists <= 10) return 2;
+                else if (assists > 10 && assists <= 14) return 3;
+                else if (assists > 14 && assists <= 20) return 4;
+                else return 5;
+            }
+        }
+
         public override long IndividualPerformance()
         {
-            return base.IndividualPerformance() + assists;
+            return base.IndividualPerformance() + AssistScore;
         }
 
         public override string ToString()
         {
             return base.ToString() +
-                "Assists: " + assists;
+                "Assists: " + AssistScore;
         }
     }
 }

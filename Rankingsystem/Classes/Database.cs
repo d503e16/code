@@ -108,7 +108,7 @@ namespace Rankingsystem.Classes
 
             write(sql);
         }
-
+        
         public List<Match> GetAllMatches()
         {
             string sql = "SELECT * FROM matchTable";
@@ -145,8 +145,8 @@ namespace Rankingsystem.Classes
             }
             return matches;
         }
-
-        private bool summonerExists(long id)
+        
+        public bool SummonerExists(long id)
         {
             string sql = "SELECT * FROM rankTable WHERE id = " + id;
 

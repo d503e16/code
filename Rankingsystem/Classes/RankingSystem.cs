@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 
@@ -11,7 +12,7 @@ namespace Rankingsystem.Classes
         public void Start()
         {
             Console.CursorVisible = false;
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Title = "Ranking System";
             int selectedIndex = 0;
 
@@ -22,10 +23,31 @@ namespace Rankingsystem.Classes
 
                 var input = Console.ReadKey(true);
 
-                if (input.Key == ConsoleKey.DownArrow &&
-                    selectedIndex == 0) selectedIndex = 1;
-                else if (input.Key == ConsoleKey.UpArrow &&
-                    selectedIndex == 1) selectedIndex = 0;
+                if (input.Key == ConsoleKey.DownArrow)
+                {
+                    switch (selectedIndex)
+                    {
+                        case 0:
+                            selectedIndex += 1;
+                            break;
+                        case 1:
+                            selectedIndex = 0;
+                            break;
+                    }
+                }
+                else if (input.Key == ConsoleKey.UpArrow)
+                {
+                    switch (selectedIndex)
+                    {
+                        case 0:
+                            selectedIndex = 1;
+                            break;
+                        case 1:
+                            selectedIndex -= 1;
+                            break;
+                    }
+                }
+
                 else if (input.Key == ConsoleKey.Enter)
                 {
                     if (selectedIndex == 0)
@@ -42,8 +64,8 @@ namespace Rankingsystem.Classes
             Console.Clear();
             Console.Write("Enter match id: ");
             var id = Console.ReadLine();
-            Console.WriteLine(updateRank(id));
-            
+            updateRank(id);
+
             waitUntilKeyIsPressed();
         }
 
@@ -52,7 +74,7 @@ namespace Rankingsystem.Classes
             Console.Clear();
             Console.Write("Enter summoner id: ");
             var id = Console.ReadLine();
-            Console.WriteLine(displayRank(id));
+            displayRank(id);
             
             waitUntilKeyIsPressed();
         }
@@ -76,51 +98,69 @@ namespace Rankingsystem.Classes
             }
         }
 
-        private string displayRank(string summonerId)
+        private void displayRank(string summonerId)
         {
             try
             {
-                return "player with id: " + summonerId + " has rank: " +
-                    db.GetSummonerRank(Convert.ToInt64(summonerId));
+                Console.WriteLine("player with id: " + summonerId + " has rank: " +
+                    db.GetSummonerRank(Convert.ToInt64(summonerId)) + "\n");
             }
             catch (Exception e)
             {
                 if (e is RowNotInTableException)
                 {
-                    return "Summoner with id " + summonerId + " does not exist!";
+                    Console.WriteLine("Summoner with id " + summonerId + " does not exist!\n");
                 }
-                if (e is FormatException)
-                    return "Id must be a number!";
-                return e.Message;
+                else if (e is FormatException)
+                    Console.WriteLine("Id must be a number!\n");
+                else
+                    Console.WriteLine(e.Message);
             }
         }
 
-        private string updateRank(string matchId)
+        private void updateRank(string matchId)
         {
             try
             {
                 var match = db.GetMatch(Convert.ToInt64(matchId));
                 match.UpdateRanks(db);
-                foreach (Participant p in match.Team1.Participants)
+
+                Console.WriteLine("Ranks are now updated!\n");
+
+                Console.WriteLine("Display individual performances (y/n)?: ");
+                
+                while (true)
                 {
-                    Console.WriteLine(p.Role.ToString());
+                    var input = Console.ReadKey(true);
+                    if (input.Key == ConsoleKey.Y)
+                    {
+                        printIndividualPerformances(match.Team1.Participants);
+                        printIndividualPerformances(match.Team2.Participants);
+                        break;
+                    }
+                    else if (input.Key == ConsoleKey.N)
+                        break;
+                    else if (input.Key == ConsoleKey.Escape)
+                        Environment.Exit(0);
                 }
-                return "Ranks are now updated!";
             }
             catch (Exception e)
             {
                 if (e is NullReferenceException)
-                    return "Match with id " + matchId + " does not exist!";
-                if (e is FormatException)
-                    return "Id must be a number!";
-                return e.Message;
+                    Console.WriteLine("Match with id " + matchId + " does not exist!\n");
+                else if (e is FormatException)
+                    Console.WriteLine("Id must be a number!\n");
+                else
+                    Console.WriteLine(e.Message);
             }
         }
 
-        private string printCalculationsOfRank(Match match)
+        private void printIndividualPerformances(List<Participant> participants)
         {
-
-            return "";
+            foreach (Participant p in participants)
+            {
+                Console.WriteLine(p.ToString());
+            }
         }
 
         private void waitUntilKeyIsPressed()

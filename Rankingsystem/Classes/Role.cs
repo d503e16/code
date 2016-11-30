@@ -42,7 +42,7 @@ namespace Rankingsystem.Classes
             set { firstBlood = value; }
         }
         
-        public abstract double[] getData();
+        public abstract double[] GetData();
 
         public double convertBool(bool b)
         {
@@ -50,22 +50,56 @@ namespace Rankingsystem.Classes
             else return 0.0;
         }
 
-        public virtual long IndividualPerformance()
-        {
-            long returnValue = 0;
-            returnValue = (long)Math.Round(_KDA) + _KP;
-            if (firstBlood) returnValue += 50;
-            if (firstTurret) returnValue += 100;
-
-            return returnValue;
+        public int KDAScore {
+            get
+            {
+                if (_KDA >= 0.0 && 1.0 >= _KDA) return 1;
+                else if (_KDA > 1.0 && 2.0 >= _KDA) return 2;
+                else if (_KDA > 3.0 && 4.0 >= _KDA) return 3;
+                else if (_KDA > 4.0 && 5.0 >= _KDA) return 4;
+                else return 5;
+            }
         }
 
+        public int KPScore
+        {
+            get
+            {
+                if (_KP >= 0 && 20 >= _KP) return 1;
+                else if (_KP > 20 && 40 >= _KP) return 2;
+                else if (_KP > 40 && 60 >= _KP) return 3;
+                else if (_KP > 60 && 80 >= _KP) return 4;
+                else return 5;
+            }
+        }
+
+        public int FirstBloodScore {
+            get
+            {
+                return firstBlood == true ? 5 : 1;
+            }
+        }
+
+        public int FirstTurretScore
+        {
+            get
+            {
+                return firstTurret == true ? 5 : 1;
+            }
+        }
+
+        public virtual long IndividualPerformance()
+        {
+            return KDAScore + KPScore + FirstBloodScore + FirstTurretScore;
+        }
+        
         public override string ToString()
         {
-            return "KDA: " + _KDA + "\n" +
-                "Kill participation: " + _KP + "\n" +
-                "First Blood: " + firstBlood + "\n" +
-                "First Turret: " + firstTurret + "\n";
+            return  
+                "KDA: " + KDAScore + "\n" +
+                "Kill participation: " + KPScore + "\n" +
+                "First Blood: " + FirstBloodScore + "\n" +
+                "First Turret: " + FirstTurretScore + "\n";
         }
     }
 }

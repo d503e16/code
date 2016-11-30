@@ -1,3 +1,5 @@
+using System;
+
 namespace Rankingsystem.Classes
 {
     public class Participant : Summoner
@@ -14,6 +16,15 @@ namespace Rankingsystem.Classes
         {
             get { return role; }
             set { role = value; }
+        }
+
+        public override string ToString()
+        {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("-----" + UserName + "-----");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+
+            return role.ToString();
         }
     }
 }

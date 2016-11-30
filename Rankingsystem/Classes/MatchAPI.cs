@@ -130,14 +130,11 @@ namespace Rankingsystem.Classes
             {
                 var result = new Participant(
                     summoner.SummonerId, summoner.SummonerName, role);
-                try
-                {
+
+                if (db.SummonerExists(summoner.SummonerId))
                     result.RankingPoints = db.GetSummonerRank(summoner.SummonerId);
-                }
-                catch (RowNotInTableException)
-                {
-                    result.RankingPoints = 0;
-                }
+                else result.RankingPoints = 0;
+
                 return result;
             }
             return null;

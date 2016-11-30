@@ -49,11 +49,11 @@ namespace Rankingsystem.Classes
                 {
                     if (input[i] == null)
                     {
-                        input[i] = teams[i].Participants[j].Role.getData();
+                        input[i] = teams[i].Participants[j].Role.GetData();
                     }
                     else
                     {
-                        input[i] = input[i].Concat(teams[i].Participants[j].Role.getData()).ToArray();
+                        input[i] = input[i].Concat(teams[i].Participants[j].Role.GetData()).ToArray();
                     }
                 }
             }
