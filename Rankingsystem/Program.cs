@@ -15,8 +15,11 @@ namespace Rankingsystem
     {
         static void Main(string[] args)
         {
-            RankingSystem s = new RankingSystem();
-            s.Start();
+            Database d = new Database();
+            NeuralNetwork n = new NeuralNetwork(d.GetAllMatches());
+            n.execute();
+            //RankingSystem s = new RankingSystem();
+            //s.Start();
         }
     }
 }

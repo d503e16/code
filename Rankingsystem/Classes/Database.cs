@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Rankingsystem.Classes
 {
@@ -106,6 +107,43 @@ namespace Rankingsystem.Classes
                 "(" + s.PlayerId + ",\"" + s.UserName + "\"," + s.RankingPoints + ")";
 
             write(sql);
+        }
+
+        public List<Match> GetAllMatches()
+        {
+            string sql = "SELECT * FROM matchTable";
+            List<Match> matches = new List<Match>();
+            using (SQLiteConnection c = new SQLiteConnection(connString))
+            {
+                c.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, c))
+                {
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        int i = 1;
+                        while (reader.Read())
+                        {
+                            var m = JsonConvert.DeserializeObject<MatchAPI>((string)reader[1]);
+                            try
+                            {
+                                matches.Add(m.CreateMatch());
+                                Console.WriteLine("Match added " + i);
+                                i++;
+                            }
+                            catch (NullReferenceException)
+                            {
+                                string deletesql = "DELETE FROM matchTable WHERE matchId =" + m.MatchId;
+                                using (SQLiteCommand delete = new SQLiteCommand(deletesql, c))
+                                {
+                                    delete.ExecuteNonQuery();
+                                }
+                                continue;
+                            }
+                        }
+                    }
+                }
+            }
+            return matches;
         }
 
         private bool summonerExists(long id)

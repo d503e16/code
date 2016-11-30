@@ -5,6 +5,8 @@ namespace Rankingsystem.Classes
 {
     public class Match
     {
+        public long MatchId { get; set; }
+
         public Match(Team t1, Team t2)
         {
             this.team1 = t1;

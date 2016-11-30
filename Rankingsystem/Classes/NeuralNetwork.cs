@@ -18,37 +18,48 @@ namespace Rankingsystem.Classes
 {
     public class NeuralNetwork
     {
-        private List<Participant> participantsTeam1;
-        private List<Participant> participantsTeam2;
-        private Team team1;
-        public NeuralNetwork(MatchAPI m)
-        {
-            team1 = m.CreateMatch().Team1;
-            participantsTeam1 = m.CreateMatch().Team1.Participants;
-            participantsTeam2 = m.CreateMatch().Team2.Participants;
-        }
-        private double[][] input = new double[1][];
-        private static double[][] ideal = new double[1][];
+        private List<Team> teams = new List<Team>();
+        //private double[][] input = new double[][];
 
-        public void CreateIdeal()
+        public NeuralNetwork(List<Match> listMatch)
         {
-            ideal[0] = new double[] { convertBool(team1.Winner) };
-        }
-
-        public void CreateInput()
-        {
-            //input[0] = participantsTeam1[0].Role.getData();
-            int i;
-            for (i = 0; i < participantsTeam1.Count; i++)
+            foreach (Match m in listMatch)
             {
-                input[i] = input[0].Concat(participantsTeam1[i].Role.getData()).ToArray();
-            }
-            for (int j = 0;  j < participantsTeam2.Count; j++, i++)
-            {
-                input[i] = input[0].Concat(participantsTeam2[j].Role.getData()).ToArray();
+                teams.Add(m.Team1);
+                teams.Add(m.Team2);
             }
         }
+        
+        public double[][] CreateIdeal()
+        {
+            double[][] ideal = new double[teams.Count][];
+            for (int i = 0; i < teams.Count ; i++)
+            {
+                ideal[i] = new double[] { convertBool(teams[i].Winner) };
+            }
+            return ideal;
+        }
 
+        public double[][] CreateInput()
+        {
+            double[][] input = new double[teams.Count][];
+            for (int i = 0; i < teams.Count; i++)
+            {
+                for (int j = 0; j < teams[i].Participants.Count; j++)
+                {
+                    if (input[i] == null)
+                    {
+                        input[i] = teams[i].Participants[j].Role.getData();
+                    }
+                    else
+                    {
+                        input[i] = input[i].Concat(teams[i].Participants[j].Role.getData()).ToArray();
+                    }
+                }
+            }
+            return input;
+        }
+        
         private double convertBool(bool b)
         {
             if (b == true) return 1.0;
@@ -57,16 +68,14 @@ namespace Rankingsystem.Classes
 
         public void execute()
         {
-            CreateIdeal();
-            CreateInput();
             var network = new BasicNetwork();
             network.AddLayer(new BasicLayer(null, false, 38));
-            network.AddLayer(new BasicLayer(new ActivationBiPolar(), false, 10));
-            network.AddLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
+            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 1));
+            network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 1));
             network.Structure.FinalizeStructure();
             network.Reset();
 
-            IMLDataSet trainingSet = new BasicMLDataSet(input, ideal);
+            IMLDataSet trainingSet = new BasicMLDataSet(CreateInput(), CreateIdeal());
 
             IMLTrain train = new Backpropagation(network, trainingSet);
 
@@ -83,9 +92,10 @@ namespace Rankingsystem.Classes
             foreach (IMLDataPair pair in trainingSet)
             {
                 IMLData output = network.Compute(pair.Input);
-                Console.WriteLine(network.GetLayerOutput(1, 2)
+                Console.WriteLine(network.GetLayerOutput(1, 0)
                                   + @", actual=" + output[0] + @",ideal=" + pair.Ideal[0]);
             }
+            Console.ReadKey();
         }
     }
 }

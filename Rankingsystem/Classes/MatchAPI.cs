@@ -103,7 +103,9 @@ namespace Rankingsystem.Classes
 
         public Match CreateMatch()
         {
-            return new Match(createTeam(100), createTeam(200));
+            var match = new Match(createTeam(100), createTeam(200));
+            match.MatchId = MatchId;
+            return match;
         }
 
         private Team createTeam(int teamId)
@@ -156,9 +158,10 @@ namespace Rankingsystem.Classes
                         return createMidData(p);
                     else if (p.Timeline.Lane == "TOP")
                         return createTopData(p);
-                    return null;
+                    else
+                        throw new NullReferenceException();
                 default:
-                    return null;
+                    throw new NullReferenceException();
             }
         }
 
