@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,10 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using Rankingsystem.Classes.Roles;
 using System.Data.SQLite;
+﻿using Rankingsystem.Classes;
 
 namespace Rankingsystem
 {
-
     class Program
     {
         static void Main(string[] args)
@@ -48,6 +49,8 @@ namespace Rankingsystem
             NeuralNetwork network = new NeuralNetwork(match);
             network.execute();
             Console.ReadKey();
+            RankingSystem s = new RankingSystem();
+            s.Start();
         }
     }
 }

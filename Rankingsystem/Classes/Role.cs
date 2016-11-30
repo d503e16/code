@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rankingsystem.Classes
 {
     public abstract class Role
     {
-        public Role(bool fb, bool ft, double kda, double kp)
+        public Role(bool fb, bool ft, double kda, long kp)
         {
             this.firstBlood = fb;
             this.firstTurret = ft;
@@ -20,9 +16,9 @@ namespace Rankingsystem.Classes
         private bool firstBlood;
         private bool firstTurret;
         private double _KDA;
-        private double _KP;
+        private long _KP;
 
-        public double KP
+        public long KP
         {
             get { return _KP; }
             set { _KP = value; }
@@ -46,12 +42,31 @@ namespace Rankingsystem.Classes
             set { firstBlood = value; }
         }
 
+<<<<<<< HEAD
         public abstract double[] getData();
 
         public double convertBool(bool b)
         {
             if (b == true) return 1.0;
             else return 0.0;
+=======
+        public virtual long IndividualPerformance()
+        {
+            long returnValue = 0;
+            returnValue = (long)Math.Round(_KDA) + _KP;
+            if (firstBlood) returnValue += 50;
+            if (firstTurret) returnValue += 100;
+
+            return returnValue;
+        }
+
+        public override string ToString()
+        {
+            return "KDA: " + _KDA + "\n" +
+                "Kill participation: " + _KP + "\n" +
+                "First Blood: " + firstBlood + "\n" +
+                "First Turret: " + firstTurret + "\n";
+>>>>>>> 344e3ba751e383ca27cb07a0ea195b2a89e84f04
         }
     }
 }

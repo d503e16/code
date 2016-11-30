@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace Rankingsystem.Classes.Roles
 {
     public class Jungle : Role
     {
-        public Jungle(bool fb, bool ft, double kda, double kp, long ownMonsters, 
+        public Jungle(bool fb, bool ft, double kda, long kp, long ownMonsters, 
             long enemyMonsters, long wards) :
             base(fb, ft, kda, kp)
         {
@@ -39,6 +33,7 @@ namespace Rankingsystem.Classes.Roles
             set { ownMonsters = value; }
         }
 
+<<<<<<< HEAD
         public override double[] getData()
         {
             List<double> list = new List<double>();
@@ -50,6 +45,19 @@ namespace Rankingsystem.Classes.Roles
             list.Add(KP);
             list.Add(KDA);
             return list.ToArray();
+=======
+        public override long IndividualPerformance()
+        {
+            return base.IndividualPerformance() + enemyMonsters + ownMonsters + wards;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() +
+                "Enemy Monsters: " + enemyMonsters + "\n" +
+                "Own Monsters: " + ownMonsters + "\n" +
+                "Wards: " + wards;
+>>>>>>> 344e3ba751e383ca27cb07a0ea195b2a89e84f04
         }
     }
 }

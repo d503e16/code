@@ -1,15 +1,20 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rankingsystem.Classes.Roles;
+using System.Data;
 
 namespace Rankingsystem.Classes
 {
     public class MatchAPI
     {
+        private Database db;
+
+        public MatchAPI()
+        {
+            db = new Database();
+        }
+
         public long MatchId { get; set; }
         public List<ParticipantAPI> Participants { get; set; }
         public List<ParticipantIdentityAPI> ParticipantIdentities { get; set; }
@@ -115,35 +120,56 @@ namespace Rankingsystem.Classes
 
         private Participant createParticipant(ParticipantAPI p)
         {
-            var summonerId = ParticipantIdentities.Find(
-                pId => pId.ParticipantId == p.ParticipantId).Player.SummonerId;
+            var summoner = ParticipantIdentities.Find(
+                pId => pId.ParticipantId == p.ParticipantId).Player;
+
+            Role role = createData(p);
+            if (role != null)
+            {
+                var result = new Participant(
+                    summoner.SummonerId, summoner.SummonerName, role);
+                try
+                {
+                    result.RankingPoints = db.GetSummonerRank(summoner.SummonerId);
+                }
+                catch (RowNotInTableException)
+                {
+                    result.RankingPoints = 0;
+                }
+                return result;
+            }
+            return null;
+        }
+
+        private Role createData(ParticipantAPI p)
+        {
             switch (p.Timeline.Role)
             {
                 case "DUO_CARRY":
-                    return new Participant(summonerId, createBotData(p));
+                    return createBotData(p);
                 case "DUO_SUPPORT":
-                    return new Participant(summonerId, createSupportData(p));
+                    return createSupportData(p);
                 case "NONE":
-                    return new Participant(summonerId, createJungleData(p));
+                    return createJungleData(p);
                 case "SOLO":
                     if (p.Timeline.Lane == "MIDDLE" || p.Timeline.Lane == "MID")
-                        return new Participant(summonerId, createMidData(p));
+                        return createMidData(p);
                     else if (p.Timeline.Lane == "TOP")
-                        return new Participant(summonerId, createTopData(p));
-                    else return null;
+                        return createTopData(p);
+                    return null;
                 default:
                     return null;
             }
         }
 
-        private double getKillParticipation(ParticipantAPI p)
+        private long getKillParticipation(ParticipantAPI p)
         {
             var teamKills = Participants.FindAll(player => player.TeamId == p.TeamId).
                 Sum(player => player.Stats.Kills);
             var killParticipation = teamKills != 0 ?
                 ((double)p.Stats.Kills + p.Stats.Assists) / teamKills :
                 0;
-            return killParticipation;
+            return Convert.ToInt64(killParticipation * 100);
         } 
         
         private Bot createBotData(ParticipantAPI p)
