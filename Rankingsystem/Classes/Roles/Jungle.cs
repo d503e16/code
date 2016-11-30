@@ -39,5 +39,17 @@ namespace Rankingsystem.Classes.Roles
             set { ownMonsters = value; }
         }
 
+        public override double[] getData()
+        {
+            List<double> list = new List<double>();
+            list.Add((double)ownMonsters);
+            list.Add((double)enemyMonsters);
+            list.Add((double)wards);
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
+        }
     }
 }

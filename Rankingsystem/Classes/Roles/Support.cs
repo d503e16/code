@@ -22,5 +22,15 @@ namespace Rankingsystem.Classes.Roles
             set { assists = value; }
         }
 
+        public override double[] getData()
+        {
+            List<double> list = new List<double>();
+            list.Add((double)assists);
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
+        }
     }
 }

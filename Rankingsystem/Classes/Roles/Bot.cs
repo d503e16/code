@@ -39,6 +39,18 @@ namespace Rankingsystem.Classes.Roles
             get { return laneMinion; }
             set { laneMinion = value; }
         }
-        
+
+        public override double[] getData()
+        {
+            List<double> list = new List<double>();
+            list.Add((double)minionDiff);
+            list.Add((double)dmgToChamps);
+            list.Add(laneMinion);
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
+            }
     }
 }
