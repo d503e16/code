@@ -20,9 +20,9 @@ namespace Rankingsystem.Classes
 
         public override string ToString()
         {
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("-----" + UserName + "-----");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;
 
             return role.ToString();
         }

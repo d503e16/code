@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Rankingsystem.Classes.Roles
 {
     public class Jungle : Role
@@ -32,7 +34,7 @@ namespace Rankingsystem.Classes.Roles
             get { return ownMonsters; }
             set { ownMonsters = value; }
         }
-
+        
         public int WardsScore
         {
             get
@@ -67,6 +69,20 @@ namespace Rankingsystem.Classes.Roles
                 else if (ownMonsters > 60 && ownMonsters <= 80) return 4;
                 else return 5;
             }
+        }
+
+        public override double[] GetData()
+        {
+            List<double> list = new List<double>();
+            list.Add((double)ownMonsters);
+            list.Add((double)enemyMonsters);
+            list.Add((double)wards);
+            // Det her skal ikke være her. Der er så meget redundans!
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
         }
 
         public override long IndividualPerformance()

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Rankingsystem.Classes.Roles
 {
     public class Top : Role
@@ -127,6 +129,22 @@ namespace Rankingsystem.Classes.Roles
                 else if (assists > 8 && assists <= 10) return 4;
                 else return 5;
             }
+        }
+        
+        public override double[] GetData()
+        {
+            List<double> list = new List<double>();
+            list.Add(laneMinions);
+            list.Add((double)minionDiff);
+            list.Add((double)wards);
+            list.Add((double)dmgToChamps);
+            list.Add((double)assists);
+            list.Add((double)deaths);
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
         }
 
         public override long IndividualPerformance()

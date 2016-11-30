@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Rankingsystem.Classes.Roles
 {
     public class Support : Role
@@ -14,6 +16,17 @@ namespace Rankingsystem.Classes.Roles
         {
             get { return assists; }
             set { assists = value; }
+        }
+        
+        public override double[] GetData()
+        {
+            List<double> list = new List<double>();
+            list.Add((double)assists);
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
         }
 
         public int AssistScore
@@ -38,6 +51,5 @@ namespace Rankingsystem.Classes.Roles
             return base.ToString() +
                 "Assists: " + AssistScore;
         }
-
     }
 }

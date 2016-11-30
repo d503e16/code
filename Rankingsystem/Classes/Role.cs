@@ -41,6 +41,14 @@ namespace Rankingsystem.Classes
             get { return firstBlood; }
             set { firstBlood = value; }
         }
+        
+        public abstract double[] GetData();
+
+        public double convertBool(bool b)
+        {
+            if (b == true) return 1.0;
+            else return 0.0;
+        }
 
         public int KDAScore {
             get

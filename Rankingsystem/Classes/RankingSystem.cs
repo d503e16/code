@@ -12,7 +12,7 @@ namespace Rankingsystem.Classes
         public void Start()
         {
             Console.CursorVisible = false;
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Title = "Ranking System";
             int selectedIndex = 0;
 

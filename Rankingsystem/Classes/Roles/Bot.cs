@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Rankingsystem.Classes.Roles
 {
@@ -34,6 +35,19 @@ namespace Rankingsystem.Classes.Roles
         {
             get { return laneMinion; }
             set { laneMinion = value; }
+        }
+        
+        public override double[] GetData()
+        {
+            List<double> list = new List<double>();
+            list.Add((double)minionDiff);
+            list.Add((double)dmgToChamps);
+            list.Add(laneMinion);
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
         }
 
         public int DmgToChampsScore

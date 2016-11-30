@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Rankingsystem.Classes.Roles
 {
     public class Mid : Role
@@ -24,7 +26,6 @@ namespace Rankingsystem.Classes.Roles
             get { return enemyMonsters; }
             set { enemyMonsters = value; }
         }
-
 
         public long DmgToChamps
         {
@@ -108,6 +109,22 @@ namespace Rankingsystem.Classes.Roles
                 else if (enemyMonsters > 15 && enemyMonsters <= 20) return 4;
                 else return 5;
             }
+        }
+
+        public override double[] GetData()
+        {
+            List<double> list = new List<double>();
+            list.Add(laneMinions);
+            list.Add((double)minionDiff);
+            list.Add((double)wards);
+            list.Add((double)dmgToChamps);
+            list.Add((double)enemyMonsters);
+            // Det her skal ikke være her (Det er på alle roles):
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list.ToArray();
         }
 
         public override long IndividualPerformance()
