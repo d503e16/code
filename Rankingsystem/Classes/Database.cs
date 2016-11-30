@@ -108,7 +108,7 @@ namespace Rankingsystem.Classes
             write(sql);
         }
 
-        private bool summonerExists(long id)
+        public bool SummonerExists(long id)
         {
             string sql = "SELECT * FROM rankTable WHERE id = " + id;
 

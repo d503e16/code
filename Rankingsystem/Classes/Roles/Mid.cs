@@ -38,7 +38,6 @@ namespace Rankingsystem.Classes.Roles
             set { minionDiff = value; }
         }
 
-
         public double LaneMinions
         {
             get { return laneMinions; }
@@ -51,20 +50,81 @@ namespace Rankingsystem.Classes.Roles
             set { wards = value; }
         }
 
+        public int DmgToChampsScore
+        {
+            get
+            {
+                if (dmgToChamps >= 0 && dmgToChamps >= 10000) return 1;
+                else if (dmgToChamps > 10000 && dmgToChamps >= 20000) return 2;
+                else if (dmgToChamps > 20000 && dmgToChamps >= 30000) return 3;
+                else if (dmgToChamps > 30000 && dmgToChamps >= 40000) return 4;
+                else return 5;
+            }
+        }
+
+        public int MinionDiffScore
+        {
+            get
+            {
+                if (minionDiff < 0) return 1;
+                else if (minionDiff >= 0 && minionDiff <= 15) return 2;
+                else if (minionDiff > 15 && minionDiff <= 30) return 3;
+                else if (minionDiff > 30 && minionDiff <= 45) return 4;
+                else return 5;
+            }
+        }
+
+        public int LaneMinionsScore
+        {
+            get
+            {
+                if (laneMinions >= 0 && laneMinions <= 2) return 1;
+                else if (laneMinions > 2 && laneMinions <= 4) return 2;
+                else if (laneMinions > 4 && laneMinions <= 6) return 3;
+                else if (laneMinions > 6 && laneMinions <= 8) return 4;
+                else return 5;
+            }
+        }
+
+        public int WardsScore
+        {
+            get
+            {
+                if (wards >= 0 && wards <= 5) return 1;
+                else if (wards > 5 && wards <= 10) return 2;
+                else if (wards > 10 && wards <= 15) return 3;
+                else if (wards > 15 && wards <= 20) return 4;
+                else return 5;
+            }
+        }
+
+        public int EnemyMonstersScore
+        {
+            get
+            {
+                if (enemyMonsters >= 0 && enemyMonsters <= 5) return 1;
+                else if (enemyMonsters > 5 && enemyMonsters <= 10) return 2;
+                else if (enemyMonsters > 10 && enemyMonsters <= 15) return 3;
+                else if (enemyMonsters > 15 && enemyMonsters <= 20) return 4;
+                else return 5;
+            }
+        }
+
         public override long IndividualPerformance()
         {
-            return base.IndividualPerformance() + wards + (long)laneMinions +
-                minionDiff + dmgToChamps + enemyMonsters;
+            return base.IndividualPerformance() + 
+                WardsScore + LaneMinionsScore +
+                MinionDiffScore + DmgToChampsScore + EnemyMonstersScore;
         }
 
         public override string ToString()
         {
             return base.ToString() +
-                "Lane Minions: " + laneMinions + "\n" +
-                "Minion Difference: " + minionDiff + "\n" +
-                "Damage to Champions: " + dmgToChamps + "\n" +
-                "Wards: " + wards + "\n" +
-                "Enemy Monsters: " + enemyMonsters;
+                "Lane Minions: " + LaneMinionsScore + "\n" +
+                "Minion Difference: " + MinionDiffScore + "\n" +
+                "Damage to Champions: " + DmgToChampsScore + "\n" +
+                "Wards: " + WardsScore + "\n" +
+                "Enemy Monsters: " + EnemyMonstersScore;
         }
     }
 }

@@ -36,17 +36,54 @@ namespace Rankingsystem.Classes.Roles
             set { laneMinion = value; }
         }
 
+        public int DmgToChampsScore
+        {
+            get
+            {
+                if (dmgToChamps >= 0 && dmgToChamps >= 10000) return 1;
+                else if (dmgToChamps > 10000 && dmgToChamps >= 20000) return 2;
+                else if (dmgToChamps > 20000 && dmgToChamps >= 30000) return 3;
+                else if (dmgToChamps > 30000 && dmgToChamps >= 40000) return 4;
+                else return 5;
+            }
+        }
+
+        public int MinionDiffScore
+        {
+            get
+            {
+                if (minionDiff < 0) return 1;
+                else if (minionDiff >= 0 && minionDiff <= 15) return 2;
+                else if (minionDiff > 15 && minionDiff <= 30) return 3;
+                else if (minionDiff > 30 && minionDiff <= 45) return 4;
+                else return 5;
+            }
+        }
+
+        public int LaneMinionsScore
+        {
+            get
+            {
+                if (laneMinion >= 0 && laneMinion <= 2) return 1;
+                else if (laneMinion > 2 && laneMinion <= 4) return 2;
+                else if (laneMinion > 4 && laneMinion <= 6) return 3;
+                else if (laneMinion > 6 && laneMinion <= 8) return 4;
+                else return 5;
+            }
+        }
+
         public override long IndividualPerformance()
         {
-            return base.IndividualPerformance() + dmgToChamps + minionDiff + (long)laneMinion;
+            return base.IndividualPerformance() + 
+                DmgToChampsScore + MinionDiffScore + LaneMinionsScore;
         }
 
         public override string ToString()
         {
             return base.ToString() +
-                "Minion Difference: " + minionDiff + "\n" +
-                "Lane Minions: " + laneMinion + "\n" +
-                "Damage to Champions: " + dmgToChamps;
+                "Minion Difference: " + MinionDiffScore + "\n" +
+                "Lane Minions: " + LaneMinionsScore + "\n" +
+                "Damage to Champions: " + DmgToChampsScore;
         }
     }
 }
