@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Rankingsystem.Classes.Roles
 {
     public class Mid : Role
@@ -51,7 +53,6 @@ namespace Rankingsystem.Classes.Roles
             set { wards = value; }
         }
 
-<<<<<<< HEAD
         public override double[] getData()
         {
             List<double> list = new List<double>();
@@ -65,7 +66,8 @@ namespace Rankingsystem.Classes.Roles
             list.Add(KP);
             list.Add(KDA);
             return list.ToArray();
-=======
+        }
+
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + wards + (long)laneMinions +
@@ -80,7 +82,6 @@ namespace Rankingsystem.Classes.Roles
                 "Damage to Champions: " + dmgToChamps + "\n" +
                 "Wards: " + wards + "\n" +
                 "Enemy Monsters: " + enemyMonsters;
->>>>>>> 344e3ba751e383ca27cb07a0ea195b2a89e84f04
         }
     }
 }

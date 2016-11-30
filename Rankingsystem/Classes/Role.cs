@@ -41,15 +41,15 @@ namespace Rankingsystem.Classes
             get { return firstBlood; }
             set { firstBlood = value; }
         }
-
-<<<<<<< HEAD
+        
         public abstract double[] getData();
 
         public double convertBool(bool b)
         {
             if (b == true) return 1.0;
             else return 0.0;
-=======
+        }
+
         public virtual long IndividualPerformance()
         {
             long returnValue = 0;
@@ -66,7 +66,6 @@ namespace Rankingsystem.Classes
                 "Kill participation: " + _KP + "\n" +
                 "First Blood: " + firstBlood + "\n" +
                 "First Turret: " + firstTurret + "\n";
->>>>>>> 344e3ba751e383ca27cb07a0ea195b2a89e84f04
         }
     }
 }

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Rankingsystem.Classes.Roles
 {
     public class Top : Role
@@ -57,7 +59,6 @@ namespace Rankingsystem.Classes.Roles
             set { wards = value; }
         }
 
-<<<<<<< HEAD
         public override double[] getData()
         {
             List<double> list = new List<double>();
@@ -72,7 +73,7 @@ namespace Rankingsystem.Classes.Roles
             list.Add(KP);
             list.Add(KDA);
             return list.ToArray();
-=======
+        }
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + (long)laneMinions + 
@@ -88,7 +89,6 @@ namespace Rankingsystem.Classes.Roles
                 "Wards: " + wards + "\n" +
                 "Deaths: " + deaths + "\n" +
                 "Assist: " + assists + "\n";
->>>>>>> 344e3ba751e383ca27cb07a0ea195b2a89e84f04
         }
     }
 }
