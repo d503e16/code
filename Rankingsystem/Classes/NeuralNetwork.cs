@@ -30,34 +30,32 @@ namespace Rankingsystem.Classes
             }
         }
         
-        public double[][] CreateIdeal()
+        private double[][] createIdeal()
         {
             double[][] ideal = new double[teams.Count][];
-            for (int i = 0; i < teams.Count ; i++)
+            for (int i = 0; i < teams.Count; i++)
             {
                 ideal[i] = new double[] { convertBool(teams[i].Winner) };
             }
             return ideal;
         }
 
-        public double[][] CreateInput()
+        private double[][] createInput()
         {
-            double[][] input = new double[teams.Count][];
-            for (int i = 0; i < teams.Count; i++)
+            List<List<double>> input = new List<List<double>>();
+            for (int teamCounter = 0; teamCounter < teams.Count; teamCounter++)
             {
-                for (int j = 0; j < teams[i].Participants.Count; j++)
+                List<double> participantsData = new List<double>();
+                Support supp = (Support)teams[teamCounter].Participants.Find(p => p.Role is Support).Role;
+                foreach (Participant p in teams[teamCounter].Participants)
                 {
-                    if (input[i] == null)
-                    {
-                        input[i] = teams[i].Participants[j].Role.GetData();
-                    }
-                    else
-                    {
-                        input[i] = input[i].Concat(teams[i].Participants[j].Role.GetData()).ToArray();
-                    }
+                    participantsData = participantsData.Concat(p.Role.GetData()).ToList();
                 }
+                if (participantsData.Count == 38)
+                    input.Add(participantsData);
             }
-            return input;
+
+            return input.Select(listElement => listElement.ToArray()).ToArray();
         }
         
         private double convertBool(bool b)
@@ -75,7 +73,10 @@ namespace Rankingsystem.Classes
             network.Structure.FinalizeStructure();
             network.Reset();
 
-            IMLDataSet trainingSet = new BasicMLDataSet(CreateInput(), CreateIdeal());
+            double[][] testInput = createInput();
+            double[][] testIdeal = createIdeal();
+
+            IMLDataSet trainingSet = new BasicMLDataSet(testInput, testIdeal);
 
             IMLTrain train = new Backpropagation(network, trainingSet);
 
@@ -97,5 +98,6 @@ namespace Rankingsystem.Classes
             }
             Console.ReadKey();
         }
+
     }
 }

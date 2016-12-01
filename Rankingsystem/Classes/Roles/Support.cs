@@ -18,15 +18,11 @@ namespace Rankingsystem.Classes.Roles
             set { assists = value; }
         }
         
-        public override double[] GetData()
+        public override List<double> GetData()
         {
-            List<double> list = new List<double>();
+            List<double> list = base.GetData();
             list.Add((double)assists);
-            list.Add(convertBool(FirstBlood));
-            list.Add(convertBool(FirstTurret));
-            list.Add(KP);
-            list.Add(KDA);
-            return list.ToArray();
+            return list;
         }
 
         public int AssistScore
