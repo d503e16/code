@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Rankingsystem.Classes
 {
@@ -11,7 +12,7 @@ namespace Rankingsystem.Classes
             this._KDA = kda;
             this._KP = kp;
         }
-        
+
         //Generelle features
         private bool firstBlood;
         private bool firstTurret;
@@ -35,14 +36,22 @@ namespace Rankingsystem.Classes
             get { return firstTurret; }
             set { firstTurret = value; }
         }
-        
+
         public bool FirstBlood
         {
             get { return firstBlood; }
             set { firstBlood = value; }
         }
-        
-        public abstract double[] GetData();
+
+        public virtual List<double> GetData()
+        {
+            List<double> list = new List<double>();
+            list.Add(convertBool(FirstBlood));
+            list.Add(convertBool(FirstTurret));
+            list.Add(KP);
+            list.Add(KDA);
+            return list;
+        }
 
         public double convertBool(bool b)
         {

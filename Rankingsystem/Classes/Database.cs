@@ -128,6 +128,33 @@ namespace Rankingsystem.Classes
                             {
                                 matches.Add(m.CreateMatch());
                                 Console.WriteLine("Match added " + i);
+                                //Match test = matches[matches.Count - 1];
+                                //List<Team> teams = new List<Team>();
+                                //teams.Add(test.Team1);
+                                //teams.Add(test.Team2);
+                                //int features = 0;
+                                //foreach (Team t in teams)
+                                //{
+                                //    for (int j = 0; j < t.Participants.Count ; j++)
+                                //    {
+                                //        features += t.Participants[j].Role.GetData().Length;
+                                //        if (j == 4 && features != 38)
+                                //        {
+                                //            string deletesql = "DELETE FROM matchTable WHERE matchId =" + test.MatchId;
+                                //            using (SQLiteCommand delete = new SQLiteCommand(deletesql, c))
+                                //            {
+                                //                delete.ExecuteNonQuery();
+                                //            }
+                                //            features = 0;
+                                //        }
+                                //        else
+                                //        {
+                                //            features = 0;
+                                //        }
+                                //    }
+                                   
+                                //}
+                                
                                 i++;
                             }
                             catch (NullReferenceException)
