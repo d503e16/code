@@ -16,6 +16,17 @@ namespace Rankingsystem.Classes
             Console.Title = "Ranking System";
             int selectedIndex = 0;
 
+            List<Match> allMatches = db.GetAllMatches();
+
+            int i = 1;
+
+            foreach (Match m in allMatches)
+            {
+                m.UpdateRanks(db);
+                Console.WriteLine("(" + i + ") Rank updated for match: " + m.MatchId);
+                i++;
+            }
+
             do
             {
                 Console.Clear();
@@ -160,6 +171,9 @@ namespace Rankingsystem.Classes
             foreach (Participant p in participants)
             {
                 Console.WriteLine(p.ToString());
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("Individual Performance: " + p.Role.IndividualPerformance());
+                Console.ForegroundColor = ConsoleColor.Cyan;
             }
         }
 

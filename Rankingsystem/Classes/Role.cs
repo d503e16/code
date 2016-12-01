@@ -90,7 +90,7 @@ namespace Rankingsystem.Classes
 
         public virtual long IndividualPerformance()
         {
-            return KDAScore + KPScore + FirstBloodScore + FirstTurretScore;
+            return Convert.ToInt64((KDAScore + KPScore + FirstBloodScore + FirstTurretScore + 0.00001) / 4);
         }
         
         public override string ToString()

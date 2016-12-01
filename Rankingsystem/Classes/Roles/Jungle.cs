@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Rankingsystem.Classes.Roles
@@ -88,7 +89,7 @@ namespace Rankingsystem.Classes.Roles
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + 
-                WardsScore + EnemyMonstersScore + OwnMonstersScore;
+                Convert.ToInt64(((double)WardsScore + EnemyMonstersScore + OwnMonstersScore) / 3);
         }
 
         public override string ToString()

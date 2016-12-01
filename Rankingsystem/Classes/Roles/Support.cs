@@ -43,7 +43,8 @@ namespace Rankingsystem.Classes.Roles
 
         public override long IndividualPerformance()
         {
-            return base.IndividualPerformance() + AssistScore;
+            return base.IndividualPerformance() + 
+                AssistScore;
         }
 
         public override string ToString()

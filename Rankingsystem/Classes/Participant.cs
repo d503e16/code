@@ -21,7 +21,7 @@ namespace Rankingsystem.Classes
         public override string ToString()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("-----" + UserName + "-----");
+            Console.WriteLine("-----" + UserName + " (" + role.GetType().Name + ")-----");
             Console.ForegroundColor = ConsoleColor.Cyan;
 
             return role.ToString();

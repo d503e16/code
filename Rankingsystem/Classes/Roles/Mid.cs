@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Rankingsystem.Classes.Roles
@@ -55,10 +56,10 @@ namespace Rankingsystem.Classes.Roles
         {
             get
             {
-                if (dmgToChamps >= 0 && dmgToChamps >= 10000) return 1;
-                else if (dmgToChamps > 10000 && dmgToChamps >= 20000) return 2;
-                else if (dmgToChamps > 20000 && dmgToChamps >= 30000) return 3;
-                else if (dmgToChamps > 30000 && dmgToChamps >= 40000) return 4;
+                if (dmgToChamps >= 0 && dmgToChamps <= 10000) return 1;
+                else if (dmgToChamps > 10000 && dmgToChamps <= 20000) return 2;
+                else if (dmgToChamps > 20000 && dmgToChamps <= 30000) return 3;
+                else if (dmgToChamps > 30000 && dmgToChamps <= 40000) return 4;
                 else return 5;
             }
         }
@@ -130,8 +131,10 @@ namespace Rankingsystem.Classes.Roles
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + 
-                WardsScore + LaneMinionsScore +
-                MinionDiffScore + DmgToChampsScore + EnemyMonstersScore;
+                Convert.ToInt64(
+                    ((double)WardsScore + LaneMinionsScore +
+                    MinionDiffScore + DmgToChampsScore + EnemyMonstersScore) / 5
+                );
         }
 
         public override string ToString()
