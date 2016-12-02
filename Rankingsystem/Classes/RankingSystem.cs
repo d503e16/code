@@ -16,16 +16,16 @@ namespace Rankingsystem.Classes
             Console.Title = "Ranking System";
             int selectedIndex = 0;
 
-            List<Match> allMatches = db.GetAllMatches();
+            //List<Match> allMatches = db.GetAllMatches();
 
-            int i = 1;
+            //int i = 1;
 
-            foreach (Match m in allMatches)
-            {
-                m.UpdateRanks(db);
-                Console.WriteLine("(" + i + ") Rank updated for match: " + m.MatchId);
-                i++;
-            }
+            //foreach (Match m in allMatches)
+            //{
+            //    m.UpdateRanks(db);
+            //    Console.WriteLine("(" + i + ") Rank updated for match: " + m.MatchId);
+            //    i++;
+            //}
 
             do
             {
@@ -63,7 +63,7 @@ namespace Rankingsystem.Classes
                 {
                     if (selectedIndex == 0)
                         printDisplayOption();
-                    else
+                    else if (selectedIndex == 1)
                         printUpdateOption();
                 }
                 else if (input.Key == ConsoleKey.Escape) break;

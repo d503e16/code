@@ -1,8 +1,11 @@
+using System.Collections.Generic;
+
 namespace Rankingsystem.Classes
 {
     public class Summoner
     {
         private long rankingPoints;
+
         public long PlayerId { get; set; }
         public string UserName { get; set; }
         public long RankingPoints {
@@ -16,11 +19,13 @@ namespace Rankingsystem.Classes
                 else rankingPoints = value;
             }
         }
+        public List<long> MatchIds { get; set; }
 
         public Summoner(long id, string userName)
         {
             PlayerId = id;
             UserName = userName;
         }
+
     }
 }
