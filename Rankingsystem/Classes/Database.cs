@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Rankingsystem.Classes.Roles;
 
 namespace Rankingsystem.Classes
 {
@@ -127,34 +128,7 @@ namespace Rankingsystem.Classes
                             try
                             {
                                 matches.Add(m.CreateMatch());
-                                Console.WriteLine("Match added " + i);
-                                //Match test = matches[matches.Count - 1];
-                                //List<Team> teams = new List<Team>();
-                                //teams.Add(test.Team1);
-                                //teams.Add(test.Team2);
-                                //int features = 0;
-                                //foreach (Team t in teams)
-                                //{
-                                //    for (int j = 0; j < t.Participants.Count ; j++)
-                                //    {
-                                //        features += t.Participants[j].Role.GetData().Length;
-                                //        if (j == 4 && features != 38)
-                                //        {
-                                //            string deletesql = "DELETE FROM matchTable WHERE matchId =" + test.MatchId;
-                                //            using (SQLiteCommand delete = new SQLiteCommand(deletesql, c))
-                                //            {
-                                //                delete.ExecuteNonQuery();
-                                //            }
-                                //            features = 0;
-                                //        }
-                                //        else
-                                //        {
-                                //            features = 0;
-                                //        }
-                                //    }
-                                   
-                                //}
-                                
+                                Console.WriteLine("Match added " + i);                                
                                 i++;
                             }
                             catch (NullReferenceException)
@@ -168,11 +142,47 @@ namespace Rankingsystem.Classes
                             }
                         }
                     }
+                    deleteInvalidMatches(matches, c);
                 }
             }
+            Console.WriteLine(matches.Count);
             return matches;
         }
         
+        private List<Match> deleteInvalidMatches(List<Match> matches, SQLiteConnection c)
+        {
+            List<Match> list = new List<Match>();
+            foreach (Match m in matches)
+            {
+                try
+                {
+                    Top top = (Top)m.Team1.Participants.Find(p => p.Role is Top).Role;
+                    Jungle jungle = (Jungle)m.Team1.Participants.Find(p => p.Role is Jungle).Role;
+                    Mid mid = (Mid)m.Team1.Participants.Find(p => p.Role is Mid).Role;
+                    Bot bot = (Bot)m.Team1.Participants.Find(p => p.Role is Bot).Role;
+                    Support support = (Support)m.Team1.Participants.Find(p => p.Role is Support).Role;
+
+                    top = (Top)m.Team2.Participants.Find(p => p.Role is Top).Role;
+                    jungle = (Jungle)m.Team2.Participants.Find(p => p.Role is Jungle).Role;
+                    mid = (Mid)m.Team2.Participants.Find(p => p.Role is Mid).Role;
+                    bot = (Bot)m.Team2.Participants.Find(p => p.Role is Bot).Role;
+                    support = (Support)m.Team2.Participants.Find(p => p.Role is Support).Role;
+                    list.Add(m);
+                }
+                    catch (NullReferenceException)
+                    {
+                        
+                        string deletesql = "DELETE FROM matchTable WHERE matchId =" + m.MatchId;
+                        using (SQLiteCommand delete = new SQLiteCommand(deletesql, c))
+                        {
+                            delete.ExecuteNonQuery();
+                        }
+                        continue;
+                    }
+                }
+            return list;
+        }
+
         public bool SummonerExists(long id)
         {
             string sql = "SELECT * FROM rankTable WHERE id = " + id;

@@ -32,12 +32,35 @@ namespace Rankingsystem.Classes
         
         private double[][] createIdeal()
         {
-            double[][] ideal = new double[teams.Count][];
-            for (int i = 0; i < teams.Count; i++)
+            List<List<double>> idealtest = new List<List<double>>();
+            for (int teamCounter = 0; teamCounter < teams.Count; teamCounter++)
             {
-                ideal[i] = new double[] { convertBool(teams[i].Winner) };
+                List<double> participantsData = new List<double>();
+                foreach (Participant p in teams[teamCounter].Participants)
+                {
+                    participantsData = participantsData.Concat(p.Role.GetData()).ToList();
+                }
+                if (participantsData.Count == 38)
+                    idealtest.Add(convertBool(teams[teamCounter].Winner));
             }
-            return ideal;
+            return idealtest.Select(listElement => listElement.ToArray()).ToArray();
+        }
+
+        private List<double> createParticipantData(int teamCounter)
+        {
+            List<double> participantsData = new List<double>();
+            Top top = (Top)teams[teamCounter].Participants.Find(p => p.Role is Top).Role;
+            Jungle jungle = (Jungle)teams[teamCounter].Participants.Find(p => p.Role is Jungle).Role;
+            Mid mid = (Mid)teams[teamCounter].Participants.Find(p => p.Role is Mid).Role;
+            Bot bot = (Bot)teams[teamCounter].Participants.Find(p => p.Role is Bot).Role;
+            Support support = (Support)teams[teamCounter].Participants.Find(p => p.Role is Support).Role;
+
+            participantsData = participantsData.Concat(top.GetData()).ToList();
+            participantsData = participantsData.Concat(jungle.GetData()).ToList();
+            participantsData = participantsData.Concat(mid.GetData()).ToList();
+            participantsData = participantsData.Concat(bot.GetData()).ToList();
+            participantsData = participantsData.Concat(support.GetData()).ToList();
+            return participantsData;
         }
 
         private double[][] createInput()
@@ -46,11 +69,24 @@ namespace Rankingsystem.Classes
             for (int teamCounter = 0; teamCounter < teams.Count; teamCounter++)
             {
                 List<double> participantsData = new List<double>();
-                Support supp = (Support)teams[teamCounter].Participants.Find(p => p.Role is Support).Role;
-                foreach (Participant p in teams[teamCounter].Participants)
+                //if ((Top)teams[teamCounter].Participants.Find(p => p.Role is Top).Role != null
+                //    && (Jungle)teams[teamCounter].Participants.Find(p => p.Role is Jungle).Role != null
+                //    && (Mid)teams[teamCounter].Participants.Find(p => p.Role is Mid).Role != null
+                //    && (Bot)teams[teamCounter].Participants.Find(p => p.Role is Bot).Role != null
+                //    && (Support)teams[teamCounter].Participants.Find(p => p.Role is Support).Role != null
+                //    )
+                //{
+                //    participantsData = createParticipantData(teamCounter);
+                //}
+                try
                 {
-                    participantsData = participantsData.Concat(p.Role.GetData()).ToList();
+                    participantsData = createParticipantData(teamCounter);
                 }
+                catch (NullReferenceException)
+                {
+                    
+                }
+
                 if (participantsData.Count == 38)
                     input.Add(participantsData);
             }
@@ -58,43 +94,49 @@ namespace Rankingsystem.Classes
             return input.Select(listElement => listElement.ToArray()).ToArray();
         }
         
-        private double convertBool(bool b)
+        private List<double> convertBool(bool b)
         {
-            if (b == true) return 1.0;
-            else return 0.0;
+            List<double> list = new List<double>();
+            if (b == true)
+            {
+                list.Add(1.0);
+                return list;
+            }
+            else
+            { 
+                list.Add(0.0); return list;
+            }
         }
 
         public void execute()
         {
             var network = new BasicNetwork();
-            network.AddLayer(new BasicLayer(null, false, 38));
+            network.AddLayer(new BasicLayer(new ActivationLinear(), true, 38));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 1));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), true, 1));
             network.Structure.FinalizeStructure();
             network.Reset();
 
-            double[][] testInput = createInput();
-            double[][] testIdeal = createIdeal();
+            var input = createInput();
+            var ideal = createIdeal();
 
-            IMLDataSet trainingSet = new BasicMLDataSet(testInput, testIdeal);
+            IMLDataSet trainingSet = new BasicMLDataSet(input, ideal);
 
             IMLTrain train = new Backpropagation(network, trainingSet);
-
             int epoch = 1;
-
+            //Muligvis problemematik pga af dmgToChamps
             do
             {
                 train.Iteration();
                 Console.WriteLine(@"Epoch #" + epoch + @" Error:" + train.Error);
                 epoch++;
-            } while (train.Error > 0.01);
+            } while (train.Error > 0.17);
 
             Console.WriteLine(@"Neural Network Results:");
             foreach (IMLDataPair pair in trainingSet)
             {
                 IMLData output = network.Compute(pair.Input);
-                Console.WriteLine(network.GetLayerOutput(1, 0)
-                                  + @", actual=" + output[0] + @",ideal=" + pair.Ideal[0]);
+                Console.WriteLine(@" actual=" + output[0] + @",ideal=" + pair.Ideal[0]);
             }
             Console.ReadKey();
         }

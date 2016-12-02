@@ -41,7 +41,7 @@ namespace Rankingsystem.Classes.Roles
         {
             List<double> list = base.GetData();
             list.Add((double)minionDiff);
-            list.Add((double)dmgToChamps);
+            list.Add((double)dmgToChamps/10000);
             list.Add(laneMinion);
             return list;
         }

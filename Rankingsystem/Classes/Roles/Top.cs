@@ -138,7 +138,7 @@ namespace Rankingsystem.Classes.Roles
             list.Add(laneMinions);
             list.Add((double)minionDiff);
             list.Add((double)wards);
-            list.Add((double)dmgToChamps);
+            list.Add((double)dmgToChamps/10000);
             list.Add((double)assists);
             list.Add((double)deaths);
             return list;
