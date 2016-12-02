@@ -45,7 +45,7 @@ namespace Rankingsystem.Classes
         private void createTables()
         {
             var rankTableSql =
-                "CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)";
+                "CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER, matchIds VARCHAR(1000000))";
             var matchTableSql =
                 "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
 
@@ -101,10 +101,32 @@ namespace Rankingsystem.Classes
             return null;
         }
 
+        public List<long> GetMatchIds(long summonerId)
+        {
+            string sql = "SELECT * FROM rankTable WHERE id = " + summonerId;
+
+            using (SQLiteConnection c = new SQLiteConnection(connString))
+            {
+                c.Open();
+                using (SQLiteCommand cmd = new SQLiteCommand(sql, c))
+                {
+                    using (SQLiteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            // reader[3] = match ids
+                            return JsonConvert.DeserializeObject<List<long>>((string)reader[3]);
+                        }
+                    }
+                }
+            }
+            return new List<long>();
+        }
+
         public void UpdateSummoner(Summoner s)
         {
-            string sql = "INSERT OR REPLACE INTO rankTable (id, username, points) VALUES" +
-                "(" + s.PlayerId + ",\"" + s.UserName + "\"," + s.RankingPoints + ")";
+            string sql = "INSERT OR REPLACE INTO rankTable (id, username, points, matchIds) VALUES" +
+                "(" + s.PlayerId + ",\"" + s.UserName + "\"," + s.RankingPoints + ",\"" + JsonConvert.SerializeObject(s.MatchIds) + "\")";
 
             write(sql);
         }

@@ -117,6 +117,7 @@ namespace Rankingsystem.Classes
             {
                 teamParticipants.Add(createParticipant(p));
             }
+
             return new Team(teamParticipants, Teams.Find(team => team.TeamId == teamId).Winner);
         }
 
@@ -134,6 +135,9 @@ namespace Rankingsystem.Classes
                 if (db.SummonerExists(summoner.SummonerId))
                     result.RankingPoints = db.GetSummonerRank(summoner.SummonerId);
                 else result.RankingPoints = 0;
+
+                result.MatchIds = db.GetMatchIds(summoner.SummonerId);
+                result.MatchIds.Add(MatchId);
 
                 return result;
             }
