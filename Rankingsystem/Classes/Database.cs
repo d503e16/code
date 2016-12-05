@@ -204,7 +204,7 @@ namespace Rankingsystem.Classes
                 }
             return list;
         }
-
+        
         public bool SummonerExists(long id)
         {
             string sql = "SELECT * FROM rankTable WHERE id = " + id;

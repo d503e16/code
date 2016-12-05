@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Rankingsystem.Classes
 {
     public abstract class Role
     {
+        System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
         public Role(bool fb, bool ft, double kda, long kp)
         {
             this.firstBlood = fb;
@@ -43,13 +45,13 @@ namespace Rankingsystem.Classes
             set { firstBlood = value; }
         }
 
-        public virtual List<double> GetData()
+        public virtual List<string> GetData()
         {
-            List<double> list = new List<double>();
-            list.Add(convertBool(FirstBlood));
-            list.Add(convertBool(FirstTurret));
-            list.Add(KP);
-            list.Add(KDA);
+            List<string> list = new List<string>();
+            list.Add(convertBool(FirstBlood).ToString(CultureInfo.InvariantCulture));
+            list.Add(convertBool(FirstTurret).ToString(CultureInfo.InvariantCulture));
+            list.Add(KP.ToString(CultureInfo.InvariantCulture));
+            list.Add(KDA.ToString(CultureInfo.InvariantCulture));
             return list;
         }
 

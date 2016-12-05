@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Rankingsystem.Classes.Roles
 {
     public class Bot : Role
     {
+        System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
         public Bot(bool firstBlood, bool firstTurret, double KDA, long KP, 
             double laneMinion, long minionDiff, long dmgToChamps) : 
             base(firstBlood, firstTurret, KDA, KP)
@@ -37,12 +39,12 @@ namespace Rankingsystem.Classes.Roles
             set { laneMinion = value; }
         }
         
-        public override List<double> GetData()
+        public override List<string> GetData()
         {
-            List<double> list = base.GetData();
-            list.Add((double)minionDiff);
-            list.Add((double)dmgToChamps/10000);
-            list.Add(laneMinion);
+            List<string> list = base.GetData();
+            list.Add(minionDiff.ToString(CultureInfo.InvariantCulture));
+            list.Add(dmgToChamps.ToString(CultureInfo.InvariantCulture));
+            list.Add(laneMinion.ToString(CultureInfo.InvariantCulture));
             return list;
         }
 

@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
+using System.Collections;
 using Encog.Engine.Network.Activation;
 using Encog.ML.Data;
 using Encog.ML.Data.Basic;
@@ -10,7 +13,12 @@ using Encog.ML.Train;
 using Encog.Neural.Networks;
 using Encog.Neural.Networks.Layers;
 using Encog.Neural.Networks.Training.Propagation.Back;
-using Encog.Neural.Networks.Training.Propagation.Resilient;
+using Encog.App.Analyst;
+using Encog.App.Analyst.CSV.Normalize;
+using Encog.App.Analyst.Script.Normalize;
+using Encog.App.Analyst.Wizard;
+using Encog.Util.CSV;
+using Encog.Util.Simple;
 using Rankingsystem.Classes.Roles;
 
 
@@ -19,7 +27,18 @@ namespace Rankingsystem.Classes
     public class NeuralNetwork
     {
         private List<Team> teams = new List<Team>();
-        //private double[][] input = new double[][];
+        private string inputFile = Directory.GetParent(
+                Directory.GetParent(
+                    Directory.GetParent(
+                    Environment.CurrentDirectory).ToString()
+                ).ToString()
+            ) + "\\input.csv";
+        //private string outputFile = Directory.GetParent(
+        //        Directory.GetParent(
+        //            Directory.GetParent(
+        //            Environment.CurrentDirectory).ToString()
+        //        ).ToString()
+        //    ) + "\\target.csv";
 
         public NeuralNetwork(List<Match> listMatch)
         {
@@ -29,26 +48,29 @@ namespace Rankingsystem.Classes
                 teams.Add(m.Team2);
             }
         }
-        
+
         private double[][] createIdeal()
         {
             List<List<double>> idealtest = new List<List<double>>();
             for (int teamCounter = 0; teamCounter < teams.Count; teamCounter++)
             {
                 List<double> participantsData = new List<double>();
+                List<string> tempData = new List<string>();
                 foreach (Participant p in teams[teamCounter].Participants)
                 {
-                    participantsData = participantsData.Concat(p.Role.GetData()).ToList();
+                    tempData = tempData.Concat(p.Role.GetData()).ToList();
                 }
+                participantsData = tempData.ConvertAll(data => double.Parse(data));
+
                 if (participantsData.Count == 38)
                     idealtest.Add(convertBool(teams[teamCounter].Winner));
             }
             return idealtest.Select(listElement => listElement.ToArray()).ToArray();
         }
 
-        private List<double> createParticipantData(int teamCounter)
+        private List<string> createParticipantData(int teamCounter)
         {
-            List<double> participantsData = new List<double>();
+            List<string> participantsData = new List<string>();
             Top top = (Top)teams[teamCounter].Participants.Find(p => p.Role is Top).Role;
             Jungle jungle = (Jungle)teams[teamCounter].Participants.Find(p => p.Role is Jungle).Role;
             Mid mid = (Mid)teams[teamCounter].Participants.Find(p => p.Role is Mid).Role;
@@ -60,37 +82,21 @@ namespace Rankingsystem.Classes
             participantsData = participantsData.Concat(mid.GetData()).ToList();
             participantsData = participantsData.Concat(bot.GetData()).ToList();
             participantsData = participantsData.Concat(support.GetData()).ToList();
+
             return participantsData;
         }
 
-        private double[][] createInput()
+        private string[][] createInput()
         {
-            List<List<double>> input = new List<List<double>>();
+            List<List<string>> input = new List<List<string>>();
             for (int teamCounter = 0; teamCounter < teams.Count; teamCounter++)
             {
-                List<double> participantsData = new List<double>();
-                //if ((Top)teams[teamCounter].Participants.Find(p => p.Role is Top).Role != null
-                //    && (Jungle)teams[teamCounter].Participants.Find(p => p.Role is Jungle).Role != null
-                //    && (Mid)teams[teamCounter].Participants.Find(p => p.Role is Mid).Role != null
-                //    && (Bot)teams[teamCounter].Participants.Find(p => p.Role is Bot).Role != null
-                //    && (Support)teams[teamCounter].Participants.Find(p => p.Role is Support).Role != null
-                //    )
-                //{
-                //    participantsData = createParticipantData(teamCounter);
-                //}
-                try
-                {
-                    participantsData = createParticipantData(teamCounter);
-                }
-                catch (NullReferenceException)
-                {
-                    
-                }
+                List<string> participantsData = new List<string>();
+                 participantsData = createParticipantData(teamCounter);
 
                 if (participantsData.Count == 38)
                     input.Add(participantsData);
             }
-
             return input.Select(listElement => listElement.ToArray()).ToArray();
         }
         
@@ -108,6 +114,57 @@ namespace Rankingsystem.Classes
             }
         }
 
+        public static void SaveArrayAsCSV<T>(T[][] jaggedArrayToSave, string fileName)
+        {
+            using (StreamWriter file = new StreamWriter(fileName))
+            {
+                foreach (T[] array in jaggedArrayToSave)
+                {
+                    foreach (T item in array)
+                    {
+                        file.Write(item + ",");
+                    }
+                    file.Write(Environment.NewLine);
+                }
+            }
+        }
+
+        //private void createFiles()
+        //{
+        //    SaveArrayAsCSV(createInput(), inputFile);
+        //    var sourceFile = new FileInfo(inputFile);
+        //    var targetFile = new FileInfo(outputFile);
+        //    var analyst = new EncogAnalyst();
+        //    var wizard = new AnalystWizard(analyst);
+
+        //    wizard.Wizard(sourceFile, false, AnalystFileFormat.DecpntComma);
+
+        //    var norm = new AnalystNormalizeCSV();
+        //    norm.Analyze(sourceFile, false, CSVFormat.English, analyst);
+        //    norm.ProduceOutputHeaders = false;
+        //    norm.Normalize(targetFile);
+        //}
+
+        //private string[][] getNormalized()
+        //{
+        //    string[][] array = File.ReadLines(outputFile).Select(line => line.Split(',')).ToArray();
+
+        //    //List<List<double>> norm = new List<List<double>>();
+        //    //for (int i = 0; i < teams.Count; i++)
+        //    //{
+
+        //    //}
+        //    return array;
+        //}
+
+        //private void serializeToExcel()
+        //{
+        //    XmlSerializer s = new XmlSerializer(typeof(string[][]));
+        //    using (StreamWriter sw = new StreamWriter(inputFile))
+        //    {
+        //        s.Serialize(sw, createInput());
+        //    }
+        //}
         public void execute()
         {
             var network = new BasicNetwork();
@@ -117,29 +174,35 @@ namespace Rankingsystem.Classes
             network.Structure.FinalizeStructure();
             network.Reset();
 
-            var input = createInput();
             var ideal = createIdeal();
+            var input = createInput();
 
-            IMLDataSet trainingSet = new BasicMLDataSet(input, ideal);
+            SaveArrayAsCSV(input, inputFile);
 
-            IMLTrain train = new Backpropagation(network, trainingSet);
-            int epoch = 1;
-            //Muligvis problemematik pga af dmgToChamps
-            do
-            {
-                train.Iteration();
-                Console.WriteLine(@"Epoch #" + epoch + @" Error:" + train.Error);
-                epoch++;
-            } while (train.Error > 0.17);
 
-            Console.WriteLine(@"Neural Network Results:");
-            foreach (IMLDataPair pair in trainingSet)
-            {
-                IMLData output = network.Compute(pair.Input);
-                Console.WriteLine(@" actual=" + output[0] + @",ideal=" + pair.Ideal[0]);
-            }
+            //createFiles();
+
+            //var trainingset = EncogUtility.LoadCSV2Memory(outputFile, network.InputCount, network.OutputCount, true, CSVFormat.English, false);
+
+            //IMLDataSet trainingSet = new BasicMLDataSet(, ideal);
+
+            //IMLTrain train = new Backpropagation(network, trainingSet);
+            //int epoch = 1;
+
+            //do
+            //{
+            //    train.Iteration();
+            //    Console.WriteLine(@"Epoch #" + epoch + @" Error:" + train.Error);
+            //    epoch++;
+            //} while (train.Error > 0.17);
+
+            //Console.WriteLine(@"Neural Network Results:");
+            //foreach (IMLDataPair pair in trainingSet)
+            //{
+            //    IMLData output = network.Compute(pair.Input);
+            //    Console.WriteLine(@" actual=" + output[0] + @",ideal=" + pair.Ideal[0]);
+            //}
             Console.ReadKey();
         }
-
     }
 }

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Rankingsystem.Classes.Roles
 {
     public class Jungle : Role
     {
+        System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
         public Jungle(bool fb, bool ft, double kda, long kp, long ownMonsters, 
             long enemyMonsters, long wards) :
             base(fb, ft, kda, kp)
@@ -72,12 +74,12 @@ namespace Rankingsystem.Classes.Roles
             }
         }
 
-        public override List<double> GetData()
+        public override List<string> GetData()
         {
-            List<double> list = base.GetData();
-            list.Add((double)ownMonsters);
-            list.Add((double)enemyMonsters);
-            list.Add((double)wards);
+            List<string> list = base.GetData();
+            list.Add(ownMonsters.ToString(CultureInfo.InvariantCulture));
+            list.Add(enemyMonsters.ToString(CultureInfo.InvariantCulture));
+            list.Add(wards.ToString(CultureInfo.InvariantCulture));
             return list;
         }
 

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Rankingsystem.Classes.Roles
 {
     public class Mid : Role
     {
+        System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
         public Mid(bool fb, bool ft, double kda, long kp, long wards, double laneMinions,
             long minionDiff, long dmgToChamps, long enemyMonsters) : 
             base(fb, ft, kda, kp)
@@ -112,14 +114,14 @@ namespace Rankingsystem.Classes.Roles
             }
         }
 
-        public override List<double> GetData()
+        public override List<string> GetData()
         {
-            List<double> list = base.GetData();
-            list.Add(laneMinions);
-            list.Add((double)minionDiff);
-            list.Add((double)wards);
-            list.Add((double)dmgToChamps/10000);
-            list.Add((double)enemyMonsters);
+            List<string> list = base.GetData();
+            list.Add(laneMinions.ToString(CultureInfo.InvariantCulture));
+            list.Add(minionDiff.ToString(CultureInfo.InvariantCulture));
+            list.Add(wards.ToString(CultureInfo.InvariantCulture));
+            list.Add(dmgToChamps.ToString(CultureInfo.InvariantCulture));
+            list.Add(enemyMonsters.ToString(CultureInfo.InvariantCulture));
             return list;
         }
 

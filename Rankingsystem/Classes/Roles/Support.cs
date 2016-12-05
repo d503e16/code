@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Rankingsystem.Classes.Roles
 {
     public class Support : Role
     {
+        System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
         public Support(bool fb, bool ft, double kda, long kp, long assists) : 
             base(fb, ft, kda, kp)
         {
@@ -18,10 +20,10 @@ namespace Rankingsystem.Classes.Roles
             set { assists = value; }
         }
         
-        public override List<double> GetData()
+        public override List<string> GetData()
         {
-            List<double> list = base.GetData();
-            list.Add((double)assists);
+            List<string> list = base.GetData();
+            list.Add(assists.ToString(CultureInfo.InvariantCulture));
             return list;
         }
 
