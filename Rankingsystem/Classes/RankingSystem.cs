@@ -7,7 +7,12 @@ namespace Rankingsystem.Classes
 {
     public class RankingSystem
     {
-        private Database db = new Database();
+        private Database db;
+
+        public RankingSystem(Database db)
+        {
+            this.db = db;
+        }
 
         public void Start()
         {
@@ -134,7 +139,7 @@ namespace Rankingsystem.Classes
             try
             {
                 var match = db.GetMatch(Convert.ToInt64(matchId));
-                match.UpdateRanks(db);
+                match.UpdateRanks();
 
                 Console.WriteLine("Ranks are now updated!\n");
 

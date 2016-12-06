@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Rankingsystem.Classes.Roles;
 using System.Data;
+using Newtonsoft.Json;
 
 namespace Rankingsystem.Classes
 {
     public class MatchAPI
     {
-        private Database db;
-
-        public MatchAPI()
-        {
-            db = new Database();
-        }
-
         public long MatchId { get; set; }
         public List<ParticipantAPI> Participants { get; set; }
         public List<ParticipantIdentityAPI> ParticipantIdentities { get; set; }
@@ -101,11 +95,9 @@ namespace Rankingsystem.Classes
             }
         }
 
-        public Match CreateMatch()
+        public Match CreateMatch(string dbname)
         {
-            var match = new Match(createTeam(100), createTeam(200));
-            match.MatchId = MatchId;
-            return match;
+            return new Match(MatchId, createTeam(100), createTeam(200), dbname);
         }
 
         private Team createTeam(int teamId)
@@ -131,13 +123,6 @@ namespace Rankingsystem.Classes
             {
                 var result = new Participant(
                     summoner.SummonerId, summoner.SummonerName, role);
-
-                if (db.SummonerExists(summoner.SummonerId))
-                    result.RankingPoints = db.GetSummonerRank(summoner.SummonerId);
-                else result.RankingPoints = 0;
-
-                result.MatchIds = db.GetMatchIds(summoner.SummonerId);
-                result.MatchIds.Add(MatchId);
 
                 return result;
             }
