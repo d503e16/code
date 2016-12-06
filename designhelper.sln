@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "designhelper", "designhelper\designhelper.csproj", "{09666126-EB79-4BC6-85EC-A5B22C0E3830}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankingsystem", "Rankingsystem\Rankingsystem.csproj", "{25E8D06F-56AC-4F6C-AA6B-3D22B5F4C706}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RankingSystemTest", "RankingSystemTest\RankingSystemTest.csproj", "{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +33,14 @@ Global
 		{25E8D06F-56AC-4F6C-AA6B-3D22B5F4C706}.Release|Any CPU.Build.0 = Release|Any CPU
 		{25E8D06F-56AC-4F6C-AA6B-3D22B5F4C706}.Release|x86.ActiveCfg = Release|Any CPU
 		{25E8D06F-56AC-4F6C-AA6B-3D22B5F4C706}.Release|x86.Build.0 = Release|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Debug|x86.Build.0 = Debug|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Release|x86.ActiveCfg = Release|Any CPU
+		{44AEFEFB-8AF8-4258-8BAC-EB84922395F9}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

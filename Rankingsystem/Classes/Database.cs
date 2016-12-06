@@ -30,6 +30,21 @@ namespace Rankingsystem.Classes
             createTables();
         }
 
+        public Database(string fileName)
+        {
+            var file =
+                Directory.GetParent(
+                        Directory.GetParent(
+                            Directory.GetParent(
+                            Environment.CurrentDirectory).ToString()
+                        ).ToString()
+                    ) + "\\" + fileName + ".sqlite";
+            if (!File.Exists(file))
+                SQLiteConnection.CreateFile(file);
+
+            connString = "Data Source=" + file + ";Version=3;";
+        }
+
         private void write(string sql)
         {
             using (var c = new SQLiteConnection(connString))
