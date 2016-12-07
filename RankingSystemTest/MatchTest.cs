@@ -8,12 +8,23 @@ namespace RankingSystemTest
     [TestClass]
     public class MatchTest
     {
-        [TestMethod]
-        public void TestMethod1()
-        {
-            Database db = new Database("testdb");
+        Database db = new Database("testdb");
 
-            Assert.IsTrue(2 == 2);
+        [TestMethod]
+        public void UpdateRanks()
+        {
+            var match = db.GetMatch(1);
+            
+            match.UpdateRanks(db);
+            var rankOfPlayerAfterUpdate = db.GetSummonerRank(31803573); 
+
+            Assert.IsTrue(90 == rankOfPlayerAfterUpdate);
+        }
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            db.ResetAndLoadTestTables();
         }
     }
 }

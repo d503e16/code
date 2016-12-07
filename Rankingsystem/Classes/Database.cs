@@ -23,7 +23,7 @@ namespace Rankingsystem.Classes
                         ).ToString()
                     ) + "\\LolRank.sqlite";
             if (!File.Exists(file))
-                SQLiteConnection.CreateFile("LolRank" + ".sqlite");
+                SQLiteConnection.CreateFile(file);
 
             connString = "Data Source=" + file + ";Version=3;";
 
@@ -43,9 +43,11 @@ namespace Rankingsystem.Classes
                 SQLiteConnection.CreateFile(file);
 
             connString = "Data Source=" + file + ";Version=3;";
+
+            createTables();
         }
 
-        private void write(string sql)
+        public void Write(string sql)
         {
             using (var c = new SQLiteConnection(connString))
             {
@@ -65,8 +67,8 @@ namespace Rankingsystem.Classes
             var matchTableSql =
                 "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
 
-            write(rankTableSql);
-            write(matchTableSql);
+            Write(rankTableSql);
+            Write(matchTableSql);
         }
 
         public long GetSummonerRank(long id)
@@ -144,7 +146,7 @@ namespace Rankingsystem.Classes
             string sql = "INSERT OR REPLACE INTO rankTable (id, username, points, matchIds) VALUES" +
                 "(" + s.PlayerId + ",\"" + s.UserName + "\"," + s.RankingPoints + ",\"" + JsonConvert.SerializeObject(s.MatchIds) + "\")";
 
-            write(sql);
+            Write(sql);
         }
         
         public List<Match> GetAllMatches()
@@ -239,6 +241,58 @@ namespace Rankingsystem.Classes
                 }
             }
             return false;
+        }
+
+        public void ResetAndLoadTestTables()
+        {
+            Write("DELETE FROM rankTable");
+            Write("DELETE FROM matchTable");
+
+            var rankTableCsv =
+                Directory.GetParent(
+                        Directory.GetParent(
+                            Directory.GetParent(
+                            Environment.CurrentDirectory).ToString()
+                        ).ToString()
+                    ) + "\\rankTable.csv";
+
+
+            var matchTableCsv =
+                Directory.GetParent(
+                        Directory.GetParent(
+                            Directory.GetParent(
+                            Environment.CurrentDirectory).ToString()
+                        ).ToString()
+                    ) + "\\matchTable.csv";
+
+            var readerMatchTable = new StreamReader(matchTableCsv);
+            var readerRankTable = new StreamReader(rankTableCsv);
+
+            while (!readerMatchTable.EndOfStream)
+            {
+                var line = readerMatchTable.ReadLine();
+                var values = line.Split('?');
+
+                long mId = Convert.ToInt64(values[0]);
+                string matchInfo = values[1];
+
+                Write("INSERT INTO matchTable VALUES" +
+                    "(" + mId + ",\'" + matchInfo + "\')");
+            }
+
+            while (!readerRankTable.EndOfStream)
+            {
+                var line = readerRankTable.ReadLine();
+                var values = line.Split('?');
+
+                long summonerId = Convert.ToInt64(values[0]);
+                string userName = values[1];
+                long points = Convert.ToInt64(values[2]);
+                string matchIds = values[3];
+
+                Write("INSERT INTO rankTable VALUES" +
+                    "(" + summonerId + ",\'" + userName + "\'," + points + ",\'" + matchIds + "\')");
+            }
         }
     }
 }
