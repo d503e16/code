@@ -25,6 +25,7 @@ namespace Rankingsystem.Classes
         {
             PlayerId = id;
             UserName = userName;
+            MatchIds = new List<long>();
         }
 
     }

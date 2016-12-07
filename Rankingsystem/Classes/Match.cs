@@ -8,10 +8,16 @@ namespace Rankingsystem.Classes
     {
         public long MatchId { get; set; }
 
-        public Match(Team t1, Team t2)
+        private Database db;
+
+        public Match(long id, Team t1, Team t2, string dbname)
         {
+            db = new Database(dbname);
+            MatchId = id;
             this.team1 = t1;
             this.team2 = t2;
+
+            setRightPropertiesOnParticipants();
         }
         private Team team1;
         private Team team2;
@@ -28,7 +34,7 @@ namespace Rankingsystem.Classes
             set { team1 = value; }
         }
 
-        public void UpdateRanks(Database db)
+        public void UpdateRanks()
         {
             const int winningPoints = 40;
             const int losingPoints = 50;
@@ -44,6 +50,29 @@ namespace Rankingsystem.Classes
                 if (team2.Winner) p.RankingPoints += p.Role.IndividualPerformance() + winningPoints; // Winning team + individual perf
                 else p.RankingPoints += p.Role.IndividualPerformance() - losingPoints; // Losing team + individual perf
                 db.UpdateSummoner(p as Summoner);
+            }
+        }
+
+        private void setRightPropertiesOnParticipants()
+        {
+            // Set the right ranks!
+            foreach (Participant p in team1.Participants)
+            {
+                if (db.SummonerExists(p.PlayerId))
+                {
+                    p.RankingPoints = db.GetSummonerRank(p.PlayerId);
+                    p.MatchIds = db.GetMatchIds(p.PlayerId);
+                }
+                p.MatchIds.Add(MatchId);
+            }
+            foreach (Participant p in team2.Participants)
+            {
+                if (db.SummonerExists(p.PlayerId))
+                {
+                    p.RankingPoints = db.GetSummonerRank(p.PlayerId);
+                    p.MatchIds = db.GetMatchIds(p.PlayerId);
+                }
+                p.MatchIds.Add(MatchId);
             }
         }
     }

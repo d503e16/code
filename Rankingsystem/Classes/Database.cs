@@ -11,27 +11,11 @@ namespace Rankingsystem.Classes
     public class Database
     {
         private string connString { get; set; }
-
-        // A method for opening the conection to the database file
-        public Database()
-        {
-            var file =
-                Directory.GetParent(
-                        Directory.GetParent(
-                            Directory.GetParent(
-                            Environment.CurrentDirectory).ToString()
-                        ).ToString()
-                    ) + "\\LolRank.sqlite";
-            if (!File.Exists(file))
-                SQLiteConnection.CreateFile(file);
-
-            connString = "Data Source=" + file + ";Version=3;";
-
-            createTables();
-        }
+        private string fileName;
 
         public Database(string fileName)
         {
+            this.fileName = fileName;
             var file =
                 Directory.GetParent(
                         Directory.GetParent(
@@ -110,7 +94,7 @@ namespace Rankingsystem.Classes
                         {
                             // reader[1] = match data
                             var m = JsonConvert.DeserializeObject<MatchAPI>((string)reader[1]);
-                            return m.CreateMatch();
+                            return m.CreateMatch(fileName);
                         }
                     }
                 }
@@ -166,7 +150,7 @@ namespace Rankingsystem.Classes
                             var m = JsonConvert.DeserializeObject<MatchAPI>((string)reader[1]);
                             try
                             {
-                                matches.Add(m.CreateMatch());
+                                matches.Add(m.CreateMatch(fileName));
                                 Console.WriteLine("Match added " + i);                                
                                 i++;
                             }
