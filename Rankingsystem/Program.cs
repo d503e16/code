@@ -17,7 +17,7 @@ namespace Rankingsystem
         {
             Database d = new Database();
             NeuralNetwork n = new NeuralNetwork(d.GetAllMatches());
-            n.execute();
+
             //RankingSystem s = new RankingSystem();
             //s.Start();
         }

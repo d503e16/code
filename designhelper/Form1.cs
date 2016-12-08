@@ -151,8 +151,6 @@ namespace designhelper
             }
             else
             {
-                MessageBox.Show("Noget gik galt! Fejl " + response.StatusCode + "\n Prøver igen!");
-
                 requestCounter += 1;
                 await GetMatchById(id);
             }
@@ -167,7 +165,7 @@ namespace designhelper
             db.InitDatabase();
 
             // fill the matchData with existing data
-            string sql = "SELECT * FROM matchTable";
+            string sql = "SELECT * FROM testMatchTable";
             using (SQLiteCommand cmd = new SQLiteCommand(sql, db.m_dbConnection))
             {
                 using (var reader = cmd.ExecuteReader())
@@ -196,7 +194,7 @@ namespace designhelper
         {
             foreach (var id in matchIds)
             {
-                string sql = @"INSERT OR REPLACE INTO matchTable (matchId, match) 
+                string sql = @"INSERT OR REPLACE INTO testMatchTable (matchId, match) 
                                VALUES (" + id + ", '" + matchData[id] + "')";
                 db.Execute(sql);
             }
