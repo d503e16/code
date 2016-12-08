@@ -14,7 +14,8 @@ namespace designhelper
 		//Lists of object contained in the Database instance used to retrieve data from the database file
 		public string[] playerTableColumns = new string[3]{"id", "username", "points"};
 		public string[] matchTableColumns = new string[2]{"matchid", "match"};
-		public SQLiteConnection m_dbConnection;
+        public string[] testMatchTableColumns = new string[2] { "matchid", "match" };
+        public SQLiteConnection m_dbConnection;
 		public List<string> readInfo = new List<string>();
 
 		public Database()
@@ -46,7 +47,8 @@ namespace designhelper
 		{
 			Execute("CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER)");
 			Execute("CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))");
-		}
+            Execute("CREATE TABLE IF NOT EXISTS testMatchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))");
+        }
 
 		// A method for executing SQL string in the database
 		public void Execute(string sql)

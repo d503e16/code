@@ -50,9 +50,12 @@ namespace Rankingsystem.Classes
                 "CREATE TABLE IF NOT EXISTS rankTable (id INTEGER PRIMARY KEY, username VARCHAR(20), points INTEGER, matchIds VARCHAR(1000000))";
             var matchTableSql =
                 "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
+            var testMatchTableSql =
+                "CREATE TABLE IF NOT EXISTS matchTable (matchId INTEGER PRIMARY KEY, match VARCHAR(1000000))";
 
             Write(rankTableSql);
             Write(matchTableSql);
+            Write(testMatchTableSql);
         }
 
         public long GetSummonerRank(long id)
