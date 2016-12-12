@@ -93,12 +93,12 @@ namespace RankingSystemTest
             List<Participant> p2 = new List<Participant>();
 
             p1.Add(new Participant(1, "userOne", 
-                new Mid(true, true, 3, 80, 20, 7, 20, 25000, 20)));
+                new Mid(true, true, 3, 80, 20, 25000, 20)));
             p1.Add(new Participant(2, "userTwo",
                 new Support(true, false, 8, 40, 20)));
 
             p2.Add(new Participant(3, "userThree",
-                new Mid(false, false, 0.8, 35, 15, 5, -20, 12000, 10)));
+                new Mid(false, false, 0.8, 35, -20, 12000, 10)));
             p2.Add(new Participant(4, "userFour",
                 new Support(false, false, 2, 45, 10)));
 
