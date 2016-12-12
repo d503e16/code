@@ -8,23 +8,15 @@ namespace Rankingsystem.Classes.Roles
     {
         System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
         public Jungle(bool fb, bool ft, double kda, long kp, long ownMonsters, 
-            long enemyMonsters, long wards) :
+            long enemyMonsters) :
             base(fb, ft, kda, kp)
         {
             this.ownMonsters = ownMonsters;
             this.enemyMonsters = enemyMonsters;
-            this.wards = wards;
         }
         //Jungle features
         private long ownMonsters;
         private long enemyMonsters;
-        private long wards;
-
-        public long Wards
-        {
-            get { return wards; }
-            set { wards = value; }
-        }
 
         public long EnemyMonsters
         {
@@ -36,18 +28,6 @@ namespace Rankingsystem.Classes.Roles
         {
             get { return ownMonsters; }
             set { ownMonsters = value; }
-        }
-        
-        public int WardsScore
-        {
-            get
-            {
-                if (wards >= 0 && wards <= 10) return 1;
-                else if (wards > 10 && wards <= 20) return 2;
-                else if (wards > 20 && wards <= 30) return 3;
-                else if (wards > 30 && wards <= 40) return 4;
-                else return 5;
-            }
         }
 
         public int EnemyMonstersScore
@@ -79,22 +59,20 @@ namespace Rankingsystem.Classes.Roles
             List<string> list = base.GetData();
             list.Add(ownMonsters.ToString(CultureInfo.InvariantCulture));
             list.Add(enemyMonsters.ToString(CultureInfo.InvariantCulture));
-            list.Add(wards.ToString(CultureInfo.InvariantCulture));
             return list;
         }
 
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + 
-                Convert.ToInt64(((double)WardsScore + EnemyMonstersScore + OwnMonstersScore) / 3);
+                Convert.ToInt64(((double)EnemyMonstersScore + OwnMonstersScore + 0.00001) / 2);
         }
 
         public override string ToString()
         {
             return base.ToString() +
                 "Enemy Monsters: " + EnemyMonstersScore + "\n" +
-                "Own Monsters: " + OwnMonstersScore + "\n" +
-                "Wards: " + WardsScore;
+                "Own Monsters: " + OwnMonstersScore;
         }
     }
 }

@@ -187,16 +187,11 @@ namespace Rankingsystem.Classes
 
         private Top createTopData(ParticipantAPI p)
         {
-            long enemyCs = Participants.Find(enemy => enemy.Timeline.Lane == p.Timeline.Lane
-                && p.TeamId != enemy.TeamId).Stats.MinionsKilled;
-
             return new Top(p.FirstBlood,
                 p.FirstTurret,
                 p.KDA,
                 getKillParticipation(p),
-                p.Wards,
                 p.LaneMinions,
-                p.Stats.MinionsKilled - enemyCs,
                 p.Stats.TotalDamageDealtToChampions,
                 p.Stats.Assists,
                 p.Stats.Deaths);
@@ -225,8 +220,7 @@ namespace Rankingsystem.Classes
                 p.KDA,
                 getKillParticipation(p),
                 p.Stats.NeutralMinionsKilledTeamJungle,
-                p.Stats.NeutralMinionsKilledEnemyJungle,
-                p.Wards);
+                p.Stats.NeutralMinionsKilledEnemyJungle);
         }
     }  
 }
