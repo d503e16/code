@@ -206,8 +206,6 @@ namespace Rankingsystem.Classes
                 p.FirstTurret,
                 p.KDA,
                 getKillParticipation(p),
-                p.Wards,
-                p.LaneMinions,
                 p.Stats.MinionsKilled - enemyCs,
                 p.Stats.TotalDamageDealtToChampions,
                 p.Stats.NeutralMinionsKilledEnemyJungle);

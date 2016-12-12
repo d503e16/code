@@ -7,19 +7,15 @@ namespace Rankingsystem.Classes.Roles
     public class Mid : Role
     {
         System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
-        public Mid(bool fb, bool ft, double kda, long kp, long wards, double laneMinions,
+        public Mid(bool fb, bool ft, double kda, long kp,
             long minionDiff, long dmgToChamps, long enemyMonsters) : 
             base(fb, ft, kda, kp)
         {
-            this.wards = wards;
-            this.laneMinions = laneMinions;
             this.minionDiff = minionDiff;
             this.dmgToChamps = dmgToChamps;
             this.enemyMonsters = enemyMonsters;
         }
         //Mid features
-        private long wards;
-        private double laneMinions;
         private long minionDiff;
         private long dmgToChamps;
         private long enemyMonsters;
@@ -40,18 +36,6 @@ namespace Rankingsystem.Classes.Roles
         {
             get { return minionDiff; }
             set { minionDiff = value; }
-        }
-
-        public double LaneMinions
-        {
-            get { return laneMinions; }
-            set { laneMinions = value; }
-        }
-
-        public long Wards
-        {
-            get { return wards; }
-            set { wards = value; }
         }
 
         public int DmgToChampsScore
@@ -78,30 +62,6 @@ namespace Rankingsystem.Classes.Roles
             }
         }
 
-        public int LaneMinionsScore
-        {
-            get
-            {
-                if (laneMinions >= 0 && laneMinions <= 2) return 1;
-                else if (laneMinions > 2 && laneMinions <= 4) return 2;
-                else if (laneMinions > 4 && laneMinions <= 6) return 3;
-                else if (laneMinions > 6 && laneMinions <= 8) return 4;
-                else return 5;
-            }
-        }
-
-        public int WardsScore
-        {
-            get
-            {
-                if (wards >= 0 && wards <= 5) return 1;
-                else if (wards > 5 && wards <= 10) return 2;
-                else if (wards > 10 && wards <= 15) return 3;
-                else if (wards > 15 && wards <= 20) return 4;
-                else return 5;
-            }
-        }
-
         public int EnemyMonstersScore
         {
             get
@@ -117,9 +77,7 @@ namespace Rankingsystem.Classes.Roles
         public override List<string> GetData()
         {
             List<string> list = base.GetData();
-            list.Add(laneMinions.ToString(CultureInfo.InvariantCulture));
             list.Add(minionDiff.ToString(CultureInfo.InvariantCulture));
-            list.Add(wards.ToString(CultureInfo.InvariantCulture));
             list.Add(dmgToChamps.ToString(CultureInfo.InvariantCulture));
             list.Add(enemyMonsters.ToString(CultureInfo.InvariantCulture));
             return list;
@@ -128,19 +86,14 @@ namespace Rankingsystem.Classes.Roles
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + 
-                Convert.ToInt64(
-                    ((double)WardsScore + LaneMinionsScore +
-                    MinionDiffScore + DmgToChampsScore + EnemyMonstersScore) / 5
-                );
+                Convert.ToInt64(((double)MinionDiffScore + DmgToChampsScore + EnemyMonstersScore) / 3);
         }
 
         public override string ToString()
         {
             return base.ToString() +
-                "Lane Minions: " + LaneMinionsScore + "\n" +
                 "Minion Difference: " + MinionDiffScore + "\n" +
                 "Damage to Champions: " + DmgToChampsScore + "\n" +
-                "Wards: " + WardsScore + "\n" +
                 "Enemy Monsters: " + EnemyMonstersScore;
         }
     }
