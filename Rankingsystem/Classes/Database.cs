@@ -136,9 +136,9 @@ namespace Rankingsystem.Classes
             Write(sql);
         }
         
-        public List<Match> GetAllMatches()
+        public List<Match> GetAllMatches(string table)
         {
-            string sql = "SELECT * FROM matchTable";
+            string sql = "SELECT * FROM " + table;
             List<Match> matches = new List<Match>();
             using (SQLiteConnection c = new SQLiteConnection(connString))
             {
@@ -159,7 +159,7 @@ namespace Rankingsystem.Classes
                             }
                             catch (NullReferenceException)
                             {
-                                string deletesql = "DELETE FROM matchTable WHERE matchId =" + m.MatchId;
+                                string deletesql = "DELETE FROM" + table + "WHERE matchId =" + m.MatchId;
                                 using (SQLiteCommand delete = new SQLiteCommand(deletesql, c))
                                 {
                                     delete.ExecuteNonQuery();
@@ -168,14 +168,14 @@ namespace Rankingsystem.Classes
                             }
                         }
                     }
-                    deleteInvalidMatches(matches, c);
+                    deleteInvalidMatches(matches, c, table);
                 }
             }
             Console.WriteLine(matches.Count);
             return matches;
         }
         
-        private List<Match> deleteInvalidMatches(List<Match> matches, SQLiteConnection c)
+        private List<Match> deleteInvalidMatches(List<Match> matches, SQLiteConnection c, string table)
         {
             List<Match> list = new List<Match>();
             foreach (Match m in matches)
@@ -198,7 +198,7 @@ namespace Rankingsystem.Classes
                     catch (NullReferenceException)
                     {
                         
-                        string deletesql = "DELETE FROM matchTable WHERE matchId =" + m.MatchId;
+                        string deletesql = "DELETE FROM " + table + " WHERE matchId =" + m.MatchId;
                         using (SQLiteCommand delete = new SQLiteCommand(deletesql, c))
                         {
                             delete.ExecuteNonQuery();

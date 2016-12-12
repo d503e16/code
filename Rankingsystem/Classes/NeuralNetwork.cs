@@ -45,7 +45,7 @@ namespace Rankingsystem.Classes
             }
         }
 
-        private List<string> createParticipantData(int teamCounter)
+        public List<string> createParticipantData(int teamCounter)
         {
             List<string> participantsData = new List<string>();
             foreach (Participant p in teams[teamCounter].Participants)
@@ -75,7 +75,7 @@ namespace Rankingsystem.Classes
             else return 0.0;
         }
 
-        public static void SaveArrayAsCSV<T>(T[][] jaggedArrayToSave, string fileName)
+        public void SaveArrayAsCSV<T>(T[][] jaggedArrayToSave, string fileName)
         {
             using (StreamWriter file = new StreamWriter(fileName))
             {
@@ -105,7 +105,7 @@ namespace Rankingsystem.Classes
         {
             var network = createNetwork();
             //SaveArrayAsCSV(createInputAndIdeal(), inputFile);
-            var trainingSet = EncogUtility.LoadCSV2Memory(normFile, network.InputCount, 1, false, CSVFormat.English, false);
+            IMLDataSet trainingSet = EncogUtility.LoadCSV2Memory(normFile, network.InputCount, 1, false, CSVFormat.English, false);
             
             IMLTrain train = new Backpropagation(network, trainingSet);
             int epoch = 1;
@@ -134,13 +134,12 @@ namespace Rankingsystem.Classes
             Console.ReadKey();
         }
 
-        public void Test(double[] input)
+        public double Test(double[] input)
         {
             double[] output = new double[1];
             BasicNetwork network = (BasicNetwork)SerializeObject.Load(networkFile);
             network.Compute(input, output);
-            Console.WriteLine(output[0]);
-            Console.ReadKey();
+            return output[0];
         }
     }
 }
