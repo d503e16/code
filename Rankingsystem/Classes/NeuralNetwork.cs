@@ -11,62 +11,109 @@ using Encog.Neural.Networks.Training.Propagation.Back;
 using Encog.Util.CSV;
 using Encog.Util.Simple;
 using Encog.Util;
+using Rankingsystem.Classes.Roles;
 
 namespace Rankingsystem.Classes
 {
     public class NeuralNetwork
     {
-        private List<Team> teams = new List<Team>();
-        private string inputFile = Directory.GetParent(
-                Directory.GetParent(
-                    Directory.GetParent(
-                    Environment.CurrentDirectory).ToString()
-                ).ToString()
-            ) + "\\input.csv";
-        private string normFile = Directory.GetParent(
-                Directory.GetParent(
-                    Directory.GetParent(
-                    Environment.CurrentDirectory).ToString()
-                ).ToString()
-            ) + "\\NormalizedInput.csv";
-        private string networkFile = Directory.GetParent(
-                Directory.GetParent(
-                    Directory.GetParent(
-                    Environment.CurrentDirectory).ToString()
-                ).ToString()
-            ) + "\\Network.ser";
+        System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
+        private List<Team> trainTeams = new List<Team>();
+        private List<Team> testTeams = new List<Team>();
+        private string inputFile = getFile("trainInput.csv");
+        private string normFile = getFile("normalizedInput.csv");
+        private string networkFile = getFile("Network.ser");
+        private string normTestFile = getFile("normalizedTestInput.csv");
 
-        public NeuralNetwork(List<Match> listMatch)
+        private static string getFile(string file)
         {
-            foreach (Match m in listMatch)
+            return Directory.GetParent(
+                Directory.GetParent(
+                    Directory.GetParent(
+                    Environment.CurrentDirectory).ToString()
+                ).ToString()
+            ) + "\\" + file;
+        }
+
+        public NeuralNetwork(List<Match> trainMatches, List<Match> testMatches)
+        {
+            foreach (Match m in trainMatches)
             {
-                teams.Add(m.Team1);
-                teams.Add(m.Team2);
+                trainTeams.Add(m.Team1);
+                trainTeams.Add(m.Team2);
+            }
+
+            foreach (Match m in testMatches)
+            {
+                testTeams.Add(m.Team1);
+                testTeams.Add(m.Team2);
             }
         }
 
-        public List<string> createParticipantData(int teamCounter)
+        private List<string> createParticipantData(int teamCounter, List<Team> teams)
         {
             List<string> participantsData = new List<string>();
-            foreach (Participant p in teams[teamCounter].Participants)
-            {
-                participantsData = participantsData.Concat(p.Role.GetData()).ToList();
-            }
+            Top top = (Top)teams[teamCounter].Participants.Find(p => p.Role is Top).Role;
+            Jungle jungle = (Jungle)teams[teamCounter].Participants.Find(p => p.Role is Jungle).Role;
+            Mid mid = (Mid)teams[teamCounter].Participants.Find(p => p.Role is Mid).Role;
+            Bot bot = (Bot)teams[teamCounter].Participants.Find(p => p.Role is Bot).Role;
+            Support support = (Support)teams[teamCounter].Participants.Find(p => p.Role is Support).Role;
+            
+            participantsData = participantsData.Concat(top.GetData()).ToList();
+            participantsData = participantsData.Concat(jungle.GetData()).ToList();
+            participantsData = participantsData.Concat(mid.GetData()).ToList();
+            participantsData = participantsData.Concat(bot.GetData()).ToList();
+            participantsData = participantsData.Concat(support.GetData()).ToList();
+            
             return participantsData;
         }
 
-        private string[][] createInputAndIdeal()
+
+        private void createInputAndIdeal()
         {
             List<List<string>> input = new List<List<string>>();
-            for (int teamCounter = 0; teamCounter < teams.Count; teamCounter++)
+            for (int teamCounter = 0; teamCounter < trainTeams.Count; teamCounter++)
             {
                 List<string> participantsData = new List<string>();
-                 participantsData = createParticipantData(teamCounter);
-                if (participantsData.Count == 38)
-                    participantsData.Add(convertBool(teams[teamCounter].Winner).ToString());
+                 participantsData = createParticipantData(teamCounter, trainTeams);
+                if (participantsData.Count != 34)
+                    participantsData.Add(convertBool(trainTeams[teamCounter].Winner).ToString());
                     input.Add(participantsData);
             }
-            return input.Select(listElement => listElement.ToArray()).ToArray();
+            SaveArrayAsCSV(input.Select(listElement => listElement.ToArray()).ToArray(), inputFile);
+        }
+
+        private void createTestInput()
+        {
+            string[] strInput;
+            List<string[]> result = new List<string[]>();  
+            for (int teamCounter = 0; teamCounter < testTeams.Count; teamCounter++)
+            {
+                List<string> participantsData = new List<string>();
+                participantsData = createParticipantData(teamCounter, testTeams);
+                if (participantsData.Count == 33)
+                {
+                    strInput = participantsData.Select(listElement => listElement).ToArray();
+                    result.Add(strInput);
+                }
+            }
+            SaveArrayAsCSV(result.ToArray(), normTestFile);
+        }
+
+        private List<double[]> readTestInput()
+        {
+            string[] strInput = new string[testTeams.Count];
+            double[] filler = new double[33];
+            List<double[]> result = new List<double[]>();
+            var data = File.ReadLines(normTestFile).Select(x => x.Split(',')).ToList();
+            for (int k = 0; k < testTeams.Count; k++)
+            {
+                result.Add(new double[1]);
+                strInput = data[k].Select(listElement => listElement).ToArray();
+                filler = Array.ConvertAll(strInput, element => double.Parse(element, cultureInfo));
+                result[k] = filler;
+            }
+            return result;
         }
         
         private double convertBool(bool b)
@@ -75,7 +122,7 @@ namespace Rankingsystem.Classes
             else return 0.0;
         }
 
-        public void SaveArrayAsCSV<T>(T[][] jaggedArrayToSave, string fileName)
+        private void SaveArrayAsCSV<T>(T[][] jaggedArrayToSave, string fileName)
         {
             using (StreamWriter file = new StreamWriter(fileName))
             {
@@ -93,7 +140,7 @@ namespace Rankingsystem.Classes
         private BasicNetwork createNetwork()
         {
             var network = new BasicNetwork();
-            network.AddLayer(new BasicLayer(null, true, 38));
+            network.AddLayer(new BasicLayer(null, true, 33));
             network.AddLayer(new BasicLayer(new ActivationTANH(), true, 1));
             network.AddLayer(new BasicLayer(new ActivationSigmoid(), false, 1));
             network.Structure.FinalizeStructure();
@@ -104,7 +151,6 @@ namespace Rankingsystem.Classes
         public void Train()
         {
             var network = createNetwork();
-            //SaveArrayAsCSV(createInputAndIdeal(), inputFile);
             IMLDataSet trainingSet = EncogUtility.LoadCSV2Memory(normFile, network.InputCount, 1, false, CSVFormat.English, false);
             
             IMLTrain train = new Backpropagation(network, trainingSet);
@@ -116,6 +162,7 @@ namespace Rankingsystem.Classes
                 Console.WriteLine(@"Epoch #" + epoch + @" Error:" + train.Error);
                 epoch++;
             } while (train.Error > 0.05);
+            train.FinishTraining();
 
             Console.WriteLine(@"Neural Network Results:");
             foreach (IMLDataPair pair in trainingSet)
@@ -131,15 +178,31 @@ namespace Rankingsystem.Classes
             }
             Console.WriteLine(truecases);
             SerializeObject.Save(networkFile, network);
-            Console.ReadKey();
         }
 
-        public double Test(double[] input)
+        public double TestSingle(double[] input)
         {
             double[] output = new double[1];
             BasicNetwork network = (BasicNetwork)SerializeObject.Load(networkFile);
             network.Compute(input, output);
+            Console.WriteLine("The chance of winning is: " + Math.Round(output[0]*100,2) + "%");
             return output[0];
+        }
+
+        public void TestAll()
+        {
+            List<double[]> testData = readTestInput();
+            int truecases = 0;
+            for (int j = 0; j < testTeams.Count; j++)
+            {
+                double outPut = TestSingle(testData[j]);
+                if (outPut < 0.5 && testTeams[j].Winner == false)
+                    truecases++;
+                else if (outPut > 0.5 && testTeams[j].Winner == true)
+                    truecases++;
+            }
+            double trueProcent = (double)truecases / testTeams.Count * 100;
+            Console.Write("The system guessed " + Math.Round(trueProcent,2) + "% correct of the matches");
         }
     }
 }
