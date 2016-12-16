@@ -48,6 +48,16 @@ namespace Rankingsystem.Classes.Roles
             return list;
         }
 
+        public override List<string> GetNormalizedData(int fbMax, int ftMax, int KPMax, double KDAMax)
+        {
+            const double minionDiffMax = 192, dmgToChampsMax = 110380, laneMinionMax = 10.15;
+            List<string> list = base.GetNormalizedData(fbMax, ftMax, KPMax, KDAMax);
+            list.Add((minionDiff / minionDiffMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((dmgToChamps / dmgToChampsMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((laneMinion / laneMinionMax).ToString(CultureInfo.InvariantCulture));
+            return list;
+        }
+
         public int DmgToChampsScore
         {
             get

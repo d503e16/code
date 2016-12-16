@@ -55,6 +55,16 @@ namespace Rankingsystem.Classes
             return list;
         }
 
+        public virtual List<string> GetNormalizedData(int fbMax, int ftMax, int KPMax, double KDAMax)
+        {
+            List<string> list = new List<string>();
+            list.Add((convertBool(FirstBlood) / fbMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((convertBool(firstTurret) / ftMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((KP / KPMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((KDA / KDAMax).ToString(CultureInfo.InvariantCulture));
+            return list;
+        }
+
         public double convertBool(bool b)
         {
             if (b == true) return 1.0;

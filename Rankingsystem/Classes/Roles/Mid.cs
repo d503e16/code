@@ -83,6 +83,16 @@ namespace Rankingsystem.Classes.Roles
             return list;
         }
 
+        public override List<string> GetNormalizedData(int fbMax, int ftMax, int KPMax , double KDAMax)
+        {
+            const double minionDiffMax = 233, dmgToChampsMax = 89532, enemyMonstersMax = 25;
+            List<string> list = base.GetNormalizedData(fbMax, ftMax, KPMax, KDAMax);
+            list.Add((minionDiff / minionDiffMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((dmgToChamps / dmgToChampsMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((enemyMonsters / enemyMonstersMax).ToString(CultureInfo.InvariantCulture));
+            return list;
+        }
+
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + 
