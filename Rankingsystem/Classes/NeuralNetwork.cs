@@ -170,9 +170,7 @@ namespace Rankingsystem.Classes
                 IMLData output = network.Compute(pair.Input);
                 Console.WriteLine(@" actual=" + output[0] + @",ideal=" + pair.Ideal[0]);
                 if (pair.Ideal[0] == 1 && output[0] > 0.5)
-                {
                     truecases++;
-                }
                 else if (pair.Ideal[0] == 0 && output[0] < 0.5)
                     truecases++;
             }
@@ -185,24 +183,31 @@ namespace Rankingsystem.Classes
             double[] output = new double[1];
             BasicNetwork network = (BasicNetwork)SerializeObject.Load(networkFile);
             network.Compute(input, output);
-            Console.WriteLine("The chance of winning is: " + Math.Round(output[0]*100,2) + "%");
+            //Console.Write("The chance of winning is: " + Math.Round(output[0]*100,2) + "%");
             return output[0];
         }
 
         public void TestAll()
         {
             List<double[]> testData = readTestInput();
-            int truecases = 0;
+            int trueCases = 0;
             for (int j = 0; j < testTeams.Count; j++)
             {
                 double outPut = TestSingle(testData[j]);
-                if (outPut < 0.5 && testTeams[j].Winner == false)
-                    truecases++;
-                else if (outPut > 0.5 && testTeams[j].Winner == true)
-                    truecases++;
+                if (j % 2 == 0)
+                {
+                    int enemyIndex = j + 1;
+                    if (outPut > TestSingle(testData[enemyIndex]) && testTeams[j].Winner == true)
+                        trueCases++;
+                    else if (outPut < TestSingle(testData[enemyIndex]) && testTeams[j].Winner == false)
+                        trueCases++;
+                    else
+                        Console.WriteLine("Team1: " + Math.Round(outPut * 100, 2) + "% Team2: " + Math.Round(TestSingle(testData[enemyIndex]) * 100, 2) + "%   " + j);
+                }
             }
-            double trueProcent = (double)truecases / testTeams.Count * 100;
+            double trueProcent = ((double)trueCases) / (testTeams.Count/2) * 100;
             Console.Write("The system guessed " + Math.Round(trueProcent,2) + "% correct of the matches");
         }
     }
 }
+
