@@ -36,41 +36,6 @@ namespace designhelper
             InitializeComponent();
         }
 
-        private async void getMatches_Click(object sender, EventArgs e)
-        {
-            string input = summonerIdInput.Text;
-            if (input != "" && input.All(char.IsDigit))
-            {
-                try
-                {
-                    summonerIdInput.Enabled = false;
-                    getMatchesButton.Enabled = false;
-                    await Add10MatchIdsAnd90playerIds(input);
-                    playerIds.Remove(long.Parse(input));
-
-                    while (matchIds.Count < 1000)
-                    {
-                        await Add10MatchIdsAnd90playerIds(playerIds.First().ToString());
-                        playerIds.Remove(playerIds.First());
-                    }
-                }
-                finally
-                {
-                    MessageBox.Show("Der er: " + matchIds.Count + " matchIds!");
-                }
-            }
-            else
-                MessageBox.Show("Input må kun være tal!");
-
-            foreach (var matchId in matchIds)
-            {
-                await GetMatchById(matchId);
-            }
-
-            MessageBox.Show("Færdig med at hente matchdata!");
-            fillDbWithMatchInfo.Visible = true;
-        }
-
         private async Task Add10MatchIdsAnd90playerIds(string summonerId)
         {
             if (!playerIds.Contains(long.Parse(summonerId)))
@@ -165,7 +130,7 @@ namespace designhelper
             db.InitDatabase();
 
             // fill the matchData with existing data
-            string sql = "SELECT * FROM testMatchTable";
+            string sql = "SELECT * FROM matchTable";
             using (SQLiteCommand cmd = new SQLiteCommand(sql, db.m_dbConnection))
             {
                 using (var reader = cmd.ExecuteReader())
@@ -176,9 +141,6 @@ namespace designhelper
                     }
                 }
             }
-
-            if (matchData.Count > 1000)
-                getMatchesButton.Enabled = false;
         }
 
         private async Task WaitTenSecondsIfTooManyRequests()
@@ -248,7 +210,7 @@ namespace designhelper
                 else if (kdaTeamB > kdaTeamA && teamB.Winner == true) trueCases += 1;
             }
 
-            MessageBox.Show("Holdet med højest KDA vinder i gennemsnit " + (double)trueCases / matchData.Count() * 100 + "% af spillene");            
+            MessageBox.Show("The team with highest KDA wins " + Math.Round((double)trueCases / matchData.Count() * 100, 2) + "% of the games");            
         }
 
         private void firstTowerButton_Click(object sender, EventArgs e)
@@ -529,8 +491,8 @@ namespace designhelper
                 else removedCases += 1;
             }
 
-            MessageBox.Show("Når adc har givet mere skade til champs end modstander adc\nvinder holdet " 
-                + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% af spillene");
+            MessageBox.Show("When a Bot Player has dealt more damage to champions than the enemy Bot Player his team wins " 
+                + Math.Round((double)trueCases / (matchData.Count - removedCases) * 100, 2) + "% of the games");
         }
 
         private void assistsSupportButton_Click(object sender, EventArgs e)
