@@ -180,11 +180,11 @@ namespace Rankingsystem.Classes
 
         public double TestSingle(double[] input)
         {
-            double[] output = new double[1];
+            double[] outPut = new double[1];
             BasicNetwork network = (BasicNetwork)SerializeObject.Load(networkFile);
-            network.Compute(input, output);
-            //Console.Write("The chance of winning is: " + Math.Round(output[0]*100,2) + "%");
-            return output[0];
+            network.Compute(input, outPut);
+            //Console.Write("The chance of winning is: " + Math.Round(output[0]*100,2) + "% | ");
+            return outPut[0];
         }
 
         public void TestAll()
@@ -198,15 +198,27 @@ namespace Rankingsystem.Classes
                 {
                     int enemyIndex = j + 1;
                     if (outPut > TestSingle(testData[enemyIndex]) && testTeams[j].Winner == true)
+                    {
                         trueCases++;
+                        Console.Write("Team1: " + Math.Round(outPut*100,2) + "%" + " Team2: " + Math.Round(TestSingle(testData[enemyIndex]) * 100, 2) + "%" + " | ");
+                        Console.WriteLine("Correct prediction " + j);
+                    }
                     else if (outPut < TestSingle(testData[enemyIndex]) && testTeams[j].Winner == false)
+                    {
                         trueCases++;
+                        Console.Write("Team1: " + Math.Round(outPut * 100, 2) + "%" + " Team2: " + Math.Round(TestSingle(testData[enemyIndex]) * 100, 2) + "%" + " | ");
+                        Console.WriteLine("Correct prediction " + j);
+                    }
                     else
-                        Console.WriteLine("Team1: " + Math.Round(outPut * 100, 2) + "% Team2: " + Math.Round(TestSingle(testData[enemyIndex]) * 100, 2) + "%   " + j);
+                    {
+                        Console.Write("Team1: " + Math.Round(outPut * 100, 2) + "%" + " Team2: " + Math.Round(TestSingle(testData[enemyIndex]) * 100, 2) + "%" + " | ");
+                        Console.WriteLine("Wrong prediction " + j);
+                    }
+                        //Console.WriteLine("Team1: " + Math.Round(outPut * 100, 2) + "% Team2: " + Math.Round(TestSingle(testData[enemyIndex]) * 100, 2) + "%   " + j);
                 }
             }
             double trueProcent = ((double)trueCases) / (testTeams.Count/2) * 100;
-            Console.Write("The system guessed " + Math.Round(trueProcent,2) + "% correct of the matches");
+            Console.WriteLine("The system guessed " + Math.Round(trueProcent,2) + "% correct of the matches");
         }
     }
 }

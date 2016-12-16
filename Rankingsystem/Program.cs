@@ -18,7 +18,7 @@ namespace Rankingsystem
             
             //RankingSystem s = new RankingSystem(d);
             //s.Start();
-            //Console.ReadKey();
+            Console.ReadKey();
         }
     }
 }
