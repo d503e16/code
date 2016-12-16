@@ -198,7 +198,7 @@ namespace Rankingsystem.Classes
                     catch (NullReferenceException)
                     {
                         
-                        string deletesql = "DELETE FROM " + table + " WHERE matchId =" + m.MatchId;
+                        string deletesql = "DELETE FROM " + table + " WHERE matchId = " + m.MatchId;
                         using (SQLiteCommand delete = new SQLiteCommand(deletesql, c))
                         {
                             delete.ExecuteNonQuery();

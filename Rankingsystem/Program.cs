@@ -15,10 +15,10 @@ namespace Rankingsystem
             List<Match> testMatches = d.GetAllMatches("testMatchTable");
             NeuralNetwork n = new NeuralNetwork(matches, testMatches);
             n.TestAll();
-
+            
             //RankingSystem s = new RankingSystem(d);
             //s.Start();
-            Console.ReadKey();
+            //Console.ReadKey();
         }
     }
 }
