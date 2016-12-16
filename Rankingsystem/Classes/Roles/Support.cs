@@ -27,6 +27,14 @@ namespace Rankingsystem.Classes.Roles
             return list;
         }
 
+        public override List<string> GetNormalizedData(int fbMax, int ftMax, int KPMax, double KDAMax)
+        {
+            const double assistsMax = 37;
+            List<string> list = base.GetNormalizedData(fbMax, ftMax, KPMax, KDAMax);
+            list.Add((assists / assistsMax).ToString(CultureInfo.InvariantCulture));
+            return list;
+        }
+
         public int AssistScore
         {
             get

@@ -62,6 +62,16 @@ namespace Rankingsystem.Classes.Roles
             return list;
         }
 
+        public override List<string> GetNormalizedData(int fbMax, int ftMax, int KPMax, double KDAMax)
+        {
+            const double ownMonstersMax = 135, enemyMonstersMax = 66;
+        
+            List<string> list = base.GetNormalizedData(fbMax, ftMax, KPMax, KDAMax);
+            list.Add((ownMonsters / ownMonstersMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((enemyMonsters / enemyMonstersMax).ToString(CultureInfo.InvariantCulture));
+            return list;
+        }
+
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() + 

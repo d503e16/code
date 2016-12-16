@@ -104,6 +104,20 @@ namespace Rankingsystem.Classes.Roles
             return list;
         }
 
+        public override List<string> GetNormalizedData(int fbMax, int ftMax, int KPMax, double KDAMax)
+        {
+            const double laneMinionsMax = 10,
+                dmgToChampsMax = 88557,
+                assistsMax = 33,
+                deathsMax = 18;
+            List<string> list = base.GetNormalizedData(fbMax, ftMax, KPMax, KDAMax);
+            list.Add((laneMinions / laneMinionsMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((dmgToChamps / dmgToChampsMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((assists / assistsMax).ToString(CultureInfo.InvariantCulture));
+            list.Add((deaths / deathsMax).ToString(CultureInfo.InvariantCulture));
+            return list;
+        }
+
         public override long IndividualPerformance()
         {
             return base.IndividualPerformance() +
